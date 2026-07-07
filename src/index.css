@@ -1,9 +1,9 @@
-/* DO NOT CHANGE */
+/* DO NOT CHANGE - Core imports */
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
 
-/* DO NOT CHANGE */
+/* DO NOT CHANGE - Theme configuration */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,74 +42,272 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* CHANGE VALUES FOR THEME */
+/* ==================== NOTEBOOK THEME ==================== */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+
+  /* Notebook paper palette */
+  --background: oklch(0.97 0.01 85);       /* warm cream paper */
+  --foreground: oklch(0.15 0.02 260);      /* deep ink blue-black */
+  --card: oklch(0.98 0.005 85);            /* lighter cream for cards */
+  --card-foreground: oklch(0.15 0.02 260);
+  --popover: oklch(0.98 0.005 85);
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.25 0.04 260);         /* dark ink blue */
+  --primary-foreground: oklch(0.97 0.01 85);
+  --secondary: oklch(0.93 0.015 85);       /* slightly darker paper */
+  --secondary-foreground: oklch(0.25 0.04 260);
+  --muted: oklch(0.94 0.01 85);            /* muted paper */
+  --muted-foreground: oklch(0.5 0.02 260); /* faded ink */
+  --accent: oklch(0.55 0.15 25);           /* red pen accent */
+  --accent-foreground: oklch(0.98 0.005 85);
+  --destructive: oklch(0.55 0.2 25);       /* correction red */
+  --border: oklch(0.88 0.015 85);          /* faint paper edge */
+  --input: oklch(0.92 0.01 85);
+  --ring: oklch(0.25 0.04 260);
+
+  /* Chart colors - muted notebook-friendly tones */
+  --chart-1: oklch(0.45 0.12 260);         /* blue ink */
+  --chart-2: oklch(0.5 0.13 180);          /* teal ink */
+  --chart-3: oklch(0.5 0.15 25);           /* red ink */
+  --chart-4: oklch(0.55 0.1 100);          /* green ink */
+  --chart-5: oklch(0.5 0.1 300);           /* purple ink */
+
+  --sidebar: oklch(0.96 0.008 85);
+  --sidebar-foreground: oklch(0.15 0.02 260);
+  --sidebar-primary: oklch(0.25 0.04 260);
+  --sidebar-primary-foreground: oklch(0.97 0.01 85);
+  --sidebar-accent: oklch(0.93 0.015 85);
+  --sidebar-accent-foreground: oklch(0.25 0.04 260);
+  --sidebar-border: oklch(0.88 0.015 85);
+  --sidebar-ring: oklch(0.25 0.04 260);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.18 0.02 260);      /* dark paper */
+  --foreground: oklch(0.9 0.01 85);        /* cream text */
+  --card: oklch(0.22 0.02 260);
+  --card-foreground: oklch(0.9 0.01 85);
+  --popover: oklch(0.22 0.02 260);
+  --popover-foreground: oklch(0.9 0.01 85);
+  --primary: oklch(0.85 0.03 85);
+  --primary-foreground: oklch(0.18 0.02 260);
+  --secondary: oklch(0.25 0.02 260);
+  --secondary-foreground: oklch(0.9 0.01 85);
+  --muted: oklch(0.24 0.02 260);
+  --muted-foreground: oklch(0.6 0.01 85);
+  --accent: oklch(0.6 0.18 25);
+  --accent-foreground: oklch(0.98 0.005 85);
+  --destructive: oklch(0.6 0.2 25);
+  --border: oklch(0.3 0.02 260);
+  --input: oklch(0.28 0.02 260);
+  --ring: oklch(0.7 0.03 85);
+  --chart-1: oklch(0.6 0.12 260);
+  --chart-2: oklch(0.55 0.13 180);
+  --chart-3: oklch(0.6 0.15 25);
+  --chart-4: oklch(0.6 0.1 100);
+  --chart-5: oklch(0.6 0.1 300);
+  --sidebar: oklch(0.2 0.02 260);
+  --sidebar-foreground: oklch(0.9 0.01 85);
+  --sidebar-primary: oklch(0.85 0.03 85);
+  --sidebar-primary-foreground: oklch(0.18 0.02 260);
+  --sidebar-accent: oklch(0.25 0.02 260);
+  --sidebar-accent-foreground: oklch(0.9 0.01 85);
+  --sidebar-border: oklch(0.3 0.02 260);
+  --sidebar-ring: oklch(0.7 0.03 85);
+}
+
+/* ==================== NOTEBOOK PAPER EFFECTS ==================== */
+
+/* Subtle paper grain background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+}
+
+/* Notebook ruled lines - horizontal */
+.notebook-ruled {
+  position: relative;
+}
+
+.notebook-ruled::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    oklch(0.85 0.01 85 / 0.4) 31px,
+    oklch(0.85 0.01 85 / 0.4) 32px
+  );
+  background-position: 0 8px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .notebook-ruled::before {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    oklch(0.3 0.02 260 / 0.3) 31px,
+    oklch(0.3 0.02 260 / 0.3) 32px
+  );
+  background-position: 0 8px;
+}
+
+/* Red margin line (left side) */
+.notebook-margin {
+  position: relative;
+}
+
+.notebook-margin::after {
+  content: "";
+  position: absolute;
+  left: 48px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: oklch(0.6 0.15 25 / 0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .notebook-margin::after {
+  background: oklch(0.6 0.18 25 / 0.25);
+}
+
+/* Full notebook page layout */
+.notebook-page {
+  position: relative;
+  background: var(--card);
+  border-radius: 0;
+  box-shadow: 1px 1px 8px oklch(0 0 0 / 0.06), -1px 0 4px oklch(0 0 0 / 0.04);
+}
+
+.notebook-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    oklch(0.85 0.01 85 / 0.4) 31px,
+    oklch(0.85 0.01 85 / 0.4) 32px
+  );
+  background-position: 0 8px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.notebook-page::after {
+  content: "";
+  position: absolute;
+  left: 56px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: oklch(0.6 0.15 25 / 0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .notebook-page::before {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    oklch(0.3 0.02 260 / 0.25) 31px,
+    oklch(0.3 0.02 260 / 0.25) 32px
+  );
+}
+
+.dark .notebook-page::after {
+  background: oklch(0.6 0.18 25 / 0.2);
+}
+
+/* Content sits above pseudo-elements */
+.notebook-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Handwriting-style accent */
+.handwriting {
+  font-family: "Georgia", "Palatino Linotype", serif;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+/* Strikethrough annotation like crossing out in a notebook */
+.annotation-strike {
+  text-decoration: line-through;
+  text-decoration-color: oklch(0.55 0.2 25 / 0.7);
+  text-decoration-thickness: 2px;
+}
+
+/* Underline like highlighting with a pen */
+.annotation-underline {
+  text-decoration: underline;
+  text-decoration-color: oklch(0.55 0.15 25 / 0.5);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Checkbox style like notebook checkboxes */
+.notebook-check {
+  width: 18px;
+  height: 18px;
+  border: 2px solid oklch(0.35 0.04 260);
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.notebook-check[data-checked="true"] {
+  background: oklch(0.35 0.04 260);
+  color: oklch(0.97 0.01 85);
+}
+
+/* Tab-like divider */
+.notebook-divider {
+  border: none;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    oklch(0.6 0.15 25 / 0.3) 0px,
+    oklch(0.6 0.15 25 / 0.3) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+/* Corner fold effect for cards */
+.notebook-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 1px 2px 6px oklch(0 0 0 / 0.05);
+}
+
+/* Sticky note accent */
+.sticky-note {
+  background: oklch(0.95 0.04 85 / 0.9);
+  transform: rotate(-0.5deg);
+  box-shadow: 2px 3px 6px oklch(0 0 0 / 0.08);
+  border-left: 3px solid oklch(0.6 0.15 25 / 0.5);
+}
+
+.dark .sticky-note {
+  background: oklch(0.3 0.04 260 / 0.9);
 }
 
 @layer base {
@@ -118,6 +316,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Georgia", "Palatino Linotype", "Times New Roman", serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Georgia", "Palatino Linotype", serif;
+    letter-spacing: 0.01em;
   }
   button:not([disabled]),
   [role="button"]:not([disabled]) {
