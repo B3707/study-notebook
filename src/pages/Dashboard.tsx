@@ -801,84 +801,103 @@ export default function Dashboard() {
                     Study Timer
                   </h2>
 
-                  <div className="notebook-card rounded-lg p-8 md:p-12 text-center max-w-lg mx-auto">
-                    {/* Timer Display */}
-                    <div className="mb-8">
-                      <div className="text-6xl md:text-7xl font-mono font-bold text-foreground tracking-wider">
-                        {String(Math.floor(timerSeconds / 60)).padStart(2, "0")}:
-                        {String(timerSeconds % 60).padStart(2, "0")}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest">
-                        {timerRunning ? "Studying..." : "Ready to study"}
+                  {subjects && subjects.length === 0 ? (
+                    <div className="notebook-card rounded-lg p-8 text-center max-w-lg mx-auto">
+                      <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                      <h3 className="font-serif font-semibold text-foreground text-lg mb-2">
+                        No Subjects Yet
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        You need to add at least one subject before you can start a study session.
                       </p>
-                    </div>
-
-                    {/* Subject Selector */}
-                    <div className="mb-6">
-                      <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider text-left">
-                        Select Subject
-                      </label>
-                      <select
-                        value={timerSubject}
-                        onChange={(e) => setTimerSubject(e.target.value)}
-                        disabled={timerRunning}
-                        className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      <Button
+                        onClick={() => setActiveTab("subjects")}
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                       >
-                        <option value="">Choose a subject...</option>
-                        {subjects?.map((s) => (
-                          <option key={s._id} value={s._id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add a Subject
+                      </Button>
                     </div>
+                  ) : (
+                    <div className="notebook-card rounded-lg p-8 md:p-12 text-center max-w-lg mx-auto">
+                      {/* Timer Display */}
+                      <div className="mb-8">
+                        <div className="text-6xl md:text-7xl font-mono font-bold text-foreground tracking-wider">
+                          {String(Math.floor(timerSeconds / 60)).padStart(2, "0")}:
+                          {String(timerSeconds % 60).padStart(2, "0")}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest">
+                          {timerRunning ? "Studying..." : "Ready to study"}
+                        </p>
+                      </div>
 
-                    {/* Notes */}
-                    <div className="mb-6">
-                      <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider text-left">
-                        Notes (optional)
-                      </label>
-                      <Input
-                        value={timerNotes}
-                        onChange={(e) => setTimerNotes(e.target.value)}
-                        placeholder="What are you studying?"
-                        disabled={timerRunning}
-                        className="bg-background"
-                      />
-                    </div>
-
-                    {/* Timer Controls */}
-                    <div className="flex items-center justify-center gap-4">
-                      {!timerRunning ? (
-                        <Button
-                          onClick={handleStartTimer}
-                          disabled={!timerSubject || timerSeconds === 0}
-                          className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md px-8 py-6"
+                      {/* Subject Selector */}
+                      <div className="mb-6">
+                        <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider text-left">
+                          Select Subject
+                        </label>
+                        <select
+                          value={timerSubject}
+                          onChange={(e) => setTimerSubject(e.target.value)}
+                          disabled={timerRunning}
+                          className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                         >
-                          <Play className="h-5 w-5 mr-2" />
-                          Start Studying
-                        </Button>
-                      ) : (
-                        <>
+                          <option value="">Choose a subject...</option>
+                          {subjects?.map((s) => (
+                            <option key={s._id} value={s._id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Notes */}
+                      <div className="mb-6">
+                        <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider text-left">
+                          Notes (optional)
+                        </label>
+                        <Input
+                          value={timerNotes}
+                          onChange={(e) => setTimerNotes(e.target.value)}
+                          placeholder="What are you studying?"
+                          disabled={timerRunning}
+                          className="bg-background"
+                        />
+                      </div>
+
+                      {/* Timer Controls */}
+                      <div className="flex items-center justify-center gap-4">
+                        {!timerRunning ? (
                           <Button
-                            onClick={() => setTimerRunning(false)}
-                            variant="outline"
-                            className="border-2 px-6 py-6"
+                            onClick={handleStartTimer}
+                            disabled={!timerSubject}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md px-8 py-6"
                           >
-                            <Pause className="h-5 w-5 mr-2" />
-                            Pause
+                            <Play className="h-5 w-5 mr-2" />
+                            Start Studying
                           </Button>
-                          <Button
-                            onClick={handleStopTimer}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md px-6 py-6"
-                          >
-                            <StopCircle className="h-5 w-5 mr-2" />
-                            Stop & Save
-                          </Button>
-                        </>
-                      )}
+                        ) : (
+                          <>
+                            <Button
+                              onClick={() => setTimerRunning(false)}
+                              variant="outline"
+                              className="border-2 px-6 py-6"
+                            >
+                              <Pause className="h-5 w-5 mr-2" />
+                              Pause
+                            </Button>
+                            <Button
+                              onClick={handleStopTimer}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md px-6 py-6"
+                            >
+                              <StopCircle className="h-5 w-5 mr-2" />
+                              Stop & Save
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Quick stats */}
                   <div className="text-center">
