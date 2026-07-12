@@ -99,8 +99,8 @@ export default function Dashboard() {
   const notes = useQuery(api.notes.list, {});
   const createNote = useMutation(api.notes.create);
   const removeNote = useMutation(api.notes.remove);
-  const generateQuestions = useAction(api["ai-notes"].generateQuestions);
-  const generateMindMap = useAction(api["ai-notes"].generateMindMap);
+  const generateQuestions = useAction(api.ainotes.generateQuestions);
+  const generateMindMap = useAction(api.ainotes.generateMindMap);
   const [showProfile, setShowProfile] = useState(false);
   const [showNewNote, setShowNewNote] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState("");
@@ -944,11 +944,7 @@ export default function Dashboard() {
                       Study Notes
                     </h2>
                     <Button
-                      onClick={() => {
-                        if (subjects && subjects.length > 0) {
-                          (document.querySelector('[data-new-note]') as HTMLButtonElement)?.click();
-                        }
-                      }}
+                      onClick={() => setShowNewNote(!showNewNote)}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                       size="sm"
                       disabled={!subjects || subjects.length === 0}

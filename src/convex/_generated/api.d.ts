@@ -9,7 +9,7 @@
  */
 
 import type * as achievements from "../achievements.js";
-import type * as ai_notes from "../ai-notes.js";
+import type * as ainotes from "../ainotes.js";
 import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as http from "../http.js";
@@ -28,7 +28,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   achievements: typeof achievements;
-  "ai-notes": typeof ai_notes;
+  ainotes: typeof ainotes;
   auth: typeof auth;
   "auth/emailOtp": typeof auth_emailOtp;
   http: typeof http;
