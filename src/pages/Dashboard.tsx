@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { LogoDropdown } from "@/components/LogoDropdown";
+import { ProfileModal } from "@/components/ProfileModal";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "convex/react";
@@ -77,6 +78,7 @@ export default function Dashboard() {
   const createSession = useMutation(api.studySessions.create);
   const removeSession = useMutation(api.studySessions.remove);
 
+  const [showProfile, setShowProfile] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -197,10 +199,22 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 md:px-6 flex items-center justify-between h-14">
           <div className="flex items-center gap-3">
             <LogoDropdown />
-            <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
-              <BookOpen className="h-3.5 w-3.5 mr-1" />
-              <span className="font-serif">Study Notebook</span>
-            </div>
+            <button
+              onClick={() => setShowProfile(true)}
+              className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group"
+            >
+              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
+                {((user as any)?.displayName || user?.name || "S")[0].toUpperCase()}
+              </div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-medium text-foreground leading-tight">
+                  {(user as any)?.displayName || user?.name || "Student"}
+                </p>
+                <p className="text-[10px] text-muted-foreground/60 leading-tight handwriting">
+                  {user?.isAnonymous ? "Guest" : "Student"}
+                </p>
+              </div>
+            </button>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -214,11 +228,6 @@ export default function Dashboard() {
                 <Moon className="h-4 w-4" />
               )}
             </button>
-            {user?.name && (
-              <span className="text-sm text-muted-foreground hidden md:block">
-                {user.name}
-              </span>
-            )}
           </div>
         </div>
       </header>
@@ -928,6 +937,7 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
       </div>
+      <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
     </div>
   );
 }
