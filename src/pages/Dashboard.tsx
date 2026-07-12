@@ -8,6 +8,7 @@ import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
+import { ShareStats } from "@/components/ShareStats";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -491,6 +492,9 @@ export default function Dashboard() {
                       </div>
                     </div>
                   )}
+
+                  {/* Share Your Progress */}
+                  <ShareStats />
                 </div>
               )}
 
