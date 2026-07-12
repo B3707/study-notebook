@@ -223,11 +223,11 @@ export default function Dashboard() {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group">
                   <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
-                    {((user as any)?.displayName || user?.name || "S")[0].toUpperCase()}
+                    {((user as any)?.displayName || user?.name || user?.email || "S")[0].toUpperCase()}
                   </div>
                   <div className="hidden md:block text-left">
                     <p className="text-sm font-medium text-foreground leading-tight">
-                      {(user as any)?.displayName || user?.name || "Student"}
+                      {(user as any)?.displayName || user?.name || user?.email || "Student"}
                     </p>
                     <p className="text-[10px] text-muted-foreground/60 leading-tight handwriting flex items-center gap-1">
                       {user?.isAnonymous ? "Guest" : "Student"}

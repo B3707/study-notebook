@@ -71,7 +71,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
               Username
             </label>
             <Input
-              value={user?.name || ""}
+              value={user?.email || user?.name || ""}
               disabled
               className="bg-secondary/50 text-muted-foreground"
             />
@@ -119,11 +119,11 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
             </p>
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-serif font-bold text-sm flex-shrink-0">
-                {(displayName || user?.name || "?")[0].toUpperCase()}
+                {(displayName || user?.name || user?.email || "?")[0].toUpperCase()}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
-                  {displayName || user?.name || "Student"}
+                  {displayName || user?.name || user?.email || "Student"}
                 </p>
                 {bio && (
                   <p className="text-xs text-muted-foreground mt-0.5 handwriting leading-relaxed">
