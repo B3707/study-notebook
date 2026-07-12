@@ -9,7 +9,6 @@ import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { ShareStats } from "@/components/ShareStats";
-import { MindMapView } from "@/components/MindMapView";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMutation, useAction, useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -46,14 +45,10 @@ import {
   Trophy,
   LogOut,
   FileImage,
-  PenLine,
-  BrainCircuit,
-  Save,
-  Loader2,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
-type Tab = "overview" | "subjects" | "tasks" | "timer" | "notes";
+type Tab = "overview" | "subjects" | "tasks" | "timer";
 
 const priorityColors: Record<Priority, string> = {
   low: "bg-chart-4/20 text-chart-4 border-chart-4/30",
@@ -96,17 +91,7 @@ export default function Dashboard() {
   const removeTask = useMutation(api.tasks.remove);
   const createSession = useMutation(api.studySessions.create);
   const removeSession = useMutation(api.studySessions.remove);
-  const notes = useQuery(api.notes.list, {});
-  const createNote = useMutation(api.notes.create);
-  const removeNote = useMutation(api.notes.remove);
-  const generateQuestions = useAction(api.ainotes.generateQuestions);
-  const generateMindMap = useAction(api.ainotes.generateMindMap);
   const [showProfile, setShowProfile] = useState(false);
-  const [showNewNote, setShowNewNote] = useState(false);
-  const [newNoteTitle, setNewNoteTitle] = useState("");
-  const [newNoteContent, setNewNoteContent] = useState("");
-  const [newNoteSubject, setNewNoteSubject] = useState("");
-  const [generatingNote, setGeneratingNote] = useState<string | null>(null);
   const [showAbout, setShowAbout] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
@@ -200,41 +185,6 @@ export default function Dashboard() {
     setShowNewTask(false);
   };
 
-  const handleCreateNote = async () => {
-    if (!newNoteTitle.trim() || !newNoteContent.trim()) return;
-    await createNote({
-      title: newNoteTitle.trim(),
-      content: newNoteContent.trim(),
-      subjectId: newNoteSubject ? (newNoteSubject as any) : undefined,
-    });
-    setNewNoteTitle("");
-    setNewNoteContent("");
-    setNewNoteSubject("");
-    setShowNewNote(false);
-  };
-
-  const handleGenerateQuestions = async (noteId: any) => {
-    setGeneratingNote(noteId);
-    try {
-      await generateQuestions({ noteId });
-    } catch (error) {
-      console.error("Failed to generate questions:", error);
-    } finally {
-      setGeneratingNote(null);
-    }
-  };
-
-  const handleGenerateMindMap = async (noteId: any) => {
-    setGeneratingNote(noteId);
-    try {
-      await generateMindMap({ noteId });
-    } catch (error) {
-      console.error("Failed to generate mind map:", error);
-    } finally {
-      setGeneratingNote(null);
-    }
-  };
-
   const totalStudyMinutes = stats?.totalMinutes ?? 0;
   const sessionCount = stats?.totalSessions ?? 0;
 
@@ -255,7 +205,6 @@ export default function Dashboard() {
     { key: "subjects", label: "Subjects", icon: BookOpen },
     { key: "tasks", label: "Tasks", icon: CheckSquare },
     { key: "timer", label: "Timer", icon: Timer },
-    { key: "notes", label: "Notes", icon: PenLine },
   ];
 
   return (
@@ -929,225 +878,6 @@ export default function Dashboard() {
                       </p>
                       <p className="text-sm text-muted-foreground/60 mt-1">
                         Create a task to start tracking your to-dos
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ==================== NOTES TAB ==================== */}
-              {activeTab === "notes" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-serif font-bold text-xl text-foreground flex items-center gap-2">
-                      <PenLine className="h-5 w-5 text-accent" />
-                      Study Notes
-                    </h2>
-                    <Button
-                      onClick={() => setShowNewNote(!showNewNote)}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
-                      size="sm"
-                      disabled={!subjects || subjects.length === 0}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      New Note
-                    </Button>
-                  </div>
-
-                  {subjects && subjects.length === 0 && (
-                    <div className="text-sm text-muted-foreground bg-secondary/50 rounded-lg px-4 py-3">
-                      Add a subject first before creating notes.
-                    </div>
-                  )}
-
-                  {/* Note Editor */}
-                  <AnimatePresence>
-                    {showNewNote && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="notebook-card rounded-lg p-5 mb-4 space-y-4">
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1">
-                              <Input
-                                value={newNoteTitle}
-                                onChange={(e) => setNewNoteTitle(e.target.value)}
-                                placeholder="Note title..."
-                                className="bg-background font-serif font-semibold"
-                              />
-                            </div>
-                            <select
-                              value={newNoteSubject}
-                              onChange={(e) => setNewNoteSubject(e.target.value)}
-                              className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              <option value="">No subject</option>
-                              {subjects?.map((s) => (
-                                <option key={s._id} value={s._id}>{s.name}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <Textarea
-                            value={newNoteContent}
-                            onChange={(e) => setNewNoteContent(e.target.value)}
-                            placeholder="Write your study notes here...&#10;&#10;Tip: Include key concepts, definitions,&#10;formulas, and important details for&#10;best AI-generated questions and mind maps."
-                            className="bg-background resize-y min-h-[180px] font-mono text-sm leading-relaxed"
-                            rows={8}
-                          />
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={handleCreateNote}
-                              disabled={!newNoteTitle.trim() || !newNoteContent.trim()}
-                              className="bg-primary text-primary-foreground hover:bg-primary/90"
-                              size="sm"
-                            >
-                              <Save className="h-4 w-4 mr-1" />
-                              Save Note
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              onClick={() => setShowNewNote(false)}
-                              size="sm"
-                            >
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Notes List */}
-                  {notes && notes.length > 0 ? (
-                    <div className="space-y-3">
-                      {notes.map((note) => (
-                        <motion.div
-                          key={note._id}
-                          layout
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="notebook-card rounded-lg overflow-hidden"
-                        >
-                          {/* Note Header */}
-                          <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="font-serif font-semibold text-foreground">
-                                  {note.title}
-                                </h3>
-                                {note.subjectName && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[10px] px-1.5 py-0"
-                                    style={{
-                                      borderColor: note.subjectColor + "40",
-                                      color: note.subjectColor,
-                                      background: note.subjectColor + "10",
-                                    }}
-                                  >
-                                    {note.subjectName}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground/60 mt-0.5">
-                                {new Date(note.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                              <button
-                                onClick={() => handleGenerateQuestions(note._id)}
-                                disabled={generatingNote === note._id}
-                                className="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-accent transition-colors text-xs flex items-center gap-1"
-                                title="Generate practice questions"
-                              >
-                                {generatingNote === note._id ? (
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                ) : (
-                                  <BrainCircuit className="h-3.5 w-3.5" />
-                                )}
-                                <span className="hidden sm:inline">Questions</span>
-                              </button>
-                              <button
-                                onClick={() => handleGenerateMindMap(note._id)}
-                                disabled={generatingNote === note._id}
-                                className="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-accent transition-colors text-xs flex items-center gap-1"
-                                title="Generate mind map"
-                              >
-                                <PenLine className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">Mind Map</span>
-                              </button>
-                              <button
-                                onClick={() => removeNote({ id: note._id })}
-                                className="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-destructive transition-colors"
-                                title="Delete note"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Note Content Preview */}
-                          <div className="px-5 pb-2">
-                            <div className="bg-secondary/30 rounded-lg p-3">
-                              <p className="text-sm text-foreground/80 whitespace-pre-wrap line-clamp-4 leading-relaxed">
-                                {note.content}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* AI Questions */}
-                          {note.questions && note.questions.length > 0 && (
-                            <div className="px-5 pb-3">
-                              <div className="border-t border-border/30 pt-3">
-                                <p className="text-xs text-accent font-medium uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                                  <BrainCircuit className="h-3 w-3" />
-                                  Practice Questions
-                                </p>
-                                <div className="space-y-2">
-                                  {note.questions.map((q, i) => (
-                                    <div key={i} className="flex items-start gap-2 text-sm">
-                                      <span className="text-accent font-mono text-xs mt-0.5 flex-shrink-0">
-                                        Q{i + 1}.
-                                      </span>
-                                      <p className="text-foreground/80">{q}</p>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Mind Map */}
-                          {note.mindMap && (() => {
-                            let mindMapData: any = null;
-                            try { mindMapData = JSON.parse(note.mindMap); } catch {}
-                            if (!mindMapData) return null;
-                            return (
-                              <div className="px-5 pb-4">
-                                <div className="border-t border-border/30 pt-3">
-                                  <p className="text-xs text-accent font-medium uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                                    <PenLine className="h-3 w-3" />
-                                    Mind Map
-                                  </p>
-                                  <MindMapView data={mindMapData} />
-                                </div>
-                              </div>
-                            );
-                          })()}
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-16 notebook-card rounded-lg">
-                      <PenLine className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                      <p className="text-muted-foreground font-medium">
-                        No notes yet
-                      </p>
-                      <p className="text-sm text-muted-foreground/60 mt-1">
-                        Create your first note and let AI generate questions & mind maps
                       </p>
                     </div>
                   )}
