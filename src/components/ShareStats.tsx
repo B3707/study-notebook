@@ -165,7 +165,7 @@ export function ShareStats() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground/60 mt-1 handwriting">
-          9:16 portrait format — perfect for stories & socials
+          1080×1920px · 9:16 · Perfect for stories & socials
         </p>
       </div>
 
@@ -176,8 +176,8 @@ export function ShareStats() {
             ref={cardRef}
             className="flex-shrink-0 flex flex-col"
             style={{
-              width: 360,
-              height: 640,
+              width: 540,
+              height: 960,
               borderRadius: 16,
               background: "#FAF6F0",
               backgroundImage: `

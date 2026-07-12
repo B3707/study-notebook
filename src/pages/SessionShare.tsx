@@ -201,8 +201,8 @@ export default function SessionShare() {
                 ref={cardRef}
                 className="flex flex-col"
                 style={{
-                  width: 360,
-                  height: 640,
+                  width: 540,
+                  height: 960,
                   borderRadius: 16,
                   background: "#FAF6F0",
                   backgroundImage: `
@@ -422,7 +422,7 @@ export default function SessionShare() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Sparkles className="h-3.5 w-3.5 text-accent" />
                   <span>
-                    9:16 portrait · 360×640px · High resolution
+                    1080×1920px · 9:16 · High resolution
                   </span>
                 </div>
               </div>
