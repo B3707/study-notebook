@@ -6,6 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
+import { AboutModal } from "@/components/AboutModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "convex/react";
@@ -30,6 +38,9 @@ import {
   ArrowLeft,
   Moon,
   Sun,
+  User,
+  Info,
+  LogOut,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
@@ -59,7 +70,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function Dashboard() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -79,6 +90,7 @@ export default function Dashboard() {
   const removeSession = useMutation(api.studySessions.remove);
 
   const [showProfile, setShowProfile] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -197,24 +209,57 @@ export default function Dashboard() {
       {/* Top Bar */}
       <header className="border-b border-border/60 bg-card/80 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 md:px-6 flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <LogoDropdown />
-            <button
-              onClick={() => setShowProfile(true)}
-              className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group"
-            >
-              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
-                {((user as any)?.displayName || user?.name || "S")[0].toUpperCase()}
-              </div>
-              <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-foreground leading-tight">
-                  {(user as any)?.displayName || user?.name || "Student"}
-                </p>
-                <p className="text-[10px] text-muted-foreground/60 leading-tight handwriting">
-                  {user?.isAnonymous ? "Guest" : "Student"}
-                </p>
-              </div>
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group">
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
+                    {((user as any)?.displayName || user?.name || "S")[0].toUpperCase()}
+                  </div>
+                  <div className="hidden md:block text-left">
+                    <p className="text-sm font-medium text-foreground leading-tight">
+                      {(user as any)?.displayName || user?.name || "Student"}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/60 leading-tight handwriting flex items-center gap-1">
+                      {user?.isAnonymous ? "Guest" : "Student"}
+                      <ChevronDown className="h-3 w-3" />
+                    </p>
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem
+                  onClick={() => setShowProfile(true)}
+                  className="cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShowAbout(true)}
+                  className="cursor-pointer"
+                >
+                  <Info className="mr-2 h-4 w-4" />
+                  About
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={async () => {
+                    try {
+                      await signOut();
+                      navigate("/");
+                    } catch (error) {
+                      console.error("Sign out error:", error);
+                    }
+                  }}
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -938,6 +983,7 @@ export default function Dashboard() {
         </div>
       </div>
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
+      <AboutModal open={showAbout} onOpenChange={setShowAbout} />
     </div>
   );
 }
