@@ -12,9 +12,9 @@ import {
   Loader2,
   Clock,
   BookOpen,
-  Target,
   TrendingUp,
   Sparkles,
+  Trophy,
 } from "lucide-react";
 
 function formatTime(minutes: number): string {
@@ -39,8 +39,6 @@ export function ShareStats() {
   const sessionCount = stats?.totalSessions ?? 0;
   const subjectCount = subjects?.length ?? 0;
   const displayName = (user as any)?.displayName || user?.name || user?.email || "Student";
-  const totalHours = Math.round((totalMinutes / 60) * 10) / 10;
-  const achievedCount = stats?.sessionsBySubject?.length ?? 0;
 
   const shareText =
     `📚 Study Notebook Report\n\n` +
@@ -91,14 +89,12 @@ export function ShareStats() {
             files: [file],
           });
         } catch {
-          // Fallback if file sharing not supported
           await navigator.share({
             title: "My Study Progress",
             text: shareText,
           });
         }
       } else {
-        // Fallback: copy to clipboard
         await navigator.clipboard.writeText(shareText);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
@@ -109,6 +105,8 @@ export function ShareStats() {
       setIsSharing(false);
     }
   };
+
+  const hasData = totalMinutes > 0;
 
   return (
     <div className="notebook-card rounded-xl overflow-hidden">
@@ -123,7 +121,7 @@ export function ShareStats() {
               variant="ghost"
               size="sm"
               onClick={handleDownload}
-              disabled={isDownloading || totalMinutes === 0}
+              disabled={isDownloading || !hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
               title="Download as PNG"
             >
@@ -138,7 +136,7 @@ export function ShareStats() {
               variant="ghost"
               size="sm"
               onClick={() => window.open(twitterUrl, "_blank", "noopener,noreferrer")}
-              disabled={totalMinutes === 0}
+              disabled={!hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
               title="Share on X (Twitter)"
             >
@@ -149,7 +147,7 @@ export function ShareStats() {
               variant="ghost"
               size="sm"
               onClick={handleShare}
-              disabled={isSharing || totalMinutes === 0}
+              disabled={isSharing || !hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
               title={copied ? "Copied!" : "Share or copy"}
             >
@@ -164,142 +162,152 @@ export function ShareStats() {
             </Button>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground/60 mt-1 handwriting">
+          9:16 portrait format — perfect for stories & socials
+        </p>
       </div>
 
-      {/* Stats Card Preview */}
-      <div className="px-5 pb-5">
-        <div
-          ref={cardRef}
-          className="rounded-xl overflow-hidden border border-border/40"
-          style={{
-            background: "#FAF6F0",
-            backgroundImage: `
-              repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 31px,
-                rgba(183, 28, 28, 0.06) 31px,
-                rgba(183, 28, 28, 0.06) 31.5px
-              )
-            `,
-          }}
-        >
-          {/* Header */}
-          <div className="px-6 pt-6 pb-3" style={{ background: "linear-gradient(135deg, #FAF6F0 0%, #F5EDE0 100%)" }}>
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: "#8B7355" }}>
-                  Study Notebook
-                </p>
-                <h2 className="text-xl font-bold font-serif mt-1" style={{ color: "#2C1810" }}>
-                  {displayName}
-                </h2>
-                <p className="text-xs mt-0.5" style={{ color: "#8B7355" }}>
-                  Study Progress Report
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg" style={{ background: "#B71C1C15" }}>
-                📓
+      {/* Stats Card Preview - 9:16 ratio */}
+      <div className="px-5 pb-5 overflow-x-auto">
+        <div className="flex justify-center">
+          <div
+            ref={cardRef}
+            className="rounded-2xl overflow-hidden border border-border/40 shadow-lg flex-shrink-0 flex flex-col"
+            style={{
+              width: 360,
+              height: 640,
+              background: "#FAF6F0",
+              backgroundImage: `
+                repeating-linear-gradient(
+                  0deg,
+                  transparent,
+                  transparent 31px,
+                  rgba(183, 28, 28, 0.06) 31px,
+                  rgba(183, 28, 28, 0.06) 31.5px
+                )
+              `,
+            }}
+          >
+            {/* Top decorative stripe */}
+            <div className="h-1.5 flex-shrink-0" style={{ background: "linear-gradient(90deg, #B71C1C, #D32F2F, #B71C1C)" }} />
+
+            {/* Header */}
+            <div className="px-7 pt-7 pb-4 flex-shrink-0" style={{ background: "linear-gradient(180deg, #FAF6F0 0%, rgba(250, 246, 240, 0) 100%)" }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[9px] uppercase tracking-[0.25em] font-medium" style={{ color: "#8B7355" }}>
+                    Study Notebook
+                  </p>
+                  <h2 className="text-2xl font-bold font-serif mt-1 leading-tight" style={{ color: "#2C1810" }}>
+                    {displayName}
+                  </h2>
+                  <p className="text-[11px] mt-0.5 italic font-serif" style={{ color: "#8B7355" }}>
+                    Study Progress Report
+                  </p>
+                </div>
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: "#B71C1C12" }}>
+                  📓
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Ruled line divider */}
-          <div className="h-px mx-6" style={{ background: "linear-gradient(to right, transparent, #B71C1C30, transparent)" }} />
-
-          {/* Stats Content */}
-          <div className="px-6 py-4 space-y-4">
-            {/* Main stat: Total Time */}
-            <div className="text-center py-3">
-              <p className="text-xs uppercase tracking-widest font-medium mb-1" style={{ color: "#B71C1C" }}>
-                Total Study Time
-              </p>
-              <p className="text-4xl font-bold font-serif tracking-tight" style={{ color: "#2C1810" }}>
-                {totalHours >= 100
-                  ? `${Math.floor(totalMinutes / 60)}h`
-                  : totalHours >= 1
+            {/* Main stat hero */}
+            <div className="flex-1 flex flex-col justify-center px-7 py-2">
+              <div className="text-center">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-4" style={{ background: "#B71C1C10" }}>
+                  <Clock className="h-3 w-3" style={{ color: "#B71C1C" }} />
+                  <span className="text-[10px] uppercase tracking-[0.15em] font-medium" style={{ color: "#B71C1C" }}>
+                    Total Study Time
+                  </span>
+                </div>
+                <p className="text-5xl md:text-6xl font-bold font-serif tracking-tight leading-none" style={{ color: "#2C1810" }}>
+                  {totalMinutes >= 60
                     ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`
                     : `${totalMinutes}m`}
-              </p>
-              <p className="text-xs mt-1 italic" style={{ color: "#8B7355" }}>
-                across {sessionCount} session{sessionCount !== 1 ? "s" : ""}
-              </p>
+                </p>
+                <p className="text-xs mt-3 italic font-serif" style={{ color: "#8B7355" }}>
+                  across {sessionCount} session{sessionCount !== 1 ? "s" : ""}
+                </p>
+              </div>
+
+              {/* Grid stats */}
+              <div className="grid grid-cols-3 gap-4 mt-6 mx-auto w-full max-w-xs">
+                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
+                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
+                    {formatTime(totalMinutes)}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
+                    Time
+                  </p>
+                </div>
+                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
+                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
+                    {sessionCount}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
+                    Sessions
+                  </p>
+                </div>
+                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
+                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
+                    {subjectCount}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
+                    Subjects
+                  </p>
+                </div>
+              </div>
+
+              {/* Subject breakdown */}
+              {stats && stats.sessionsBySubject.length > 0 && (
+                <div className="mt-5 px-2">
+                  <p className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2 text-center" style={{ color: "#8B7355" }}>
+                    Time by Subject
+                  </p>
+                  <div className="space-y-1.5 max-w-xs mx-auto">
+                    {stats.sessionsBySubject.slice(0, 4).map((item, i) => (
+                      <div key={item.subjectName} className="flex items-center gap-2">
+                        <div
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: item.subjectColor }}
+                        />
+                        <span className="text-[11px] flex-1 truncate" style={{ color: "#2C1810" }}>
+                          {item.subjectName}
+                        </span>
+                        <div className="flex-1 max-w-[100px] h-1.5 rounded-full overflow-hidden mx-2" style={{ background: "#B71C1C10" }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${(item.minutes / totalMinutes) * 100}%`,
+                              backgroundColor: item.subjectColor,
+                            }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "#8B7355" }}>
+                          {formatTime(item.minutes)}
+                        </span>
+                      </div>
+                    ))}
+                    {stats.sessionsBySubject.length > 4 && (
+                      <p className="text-[9px] text-center italic pt-1" style={{ color: "#8B7355" }}>
+                        + {stats.sessionsBySubject.length - 4} more subjects
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Grid stats */}
-            <div className="grid grid-cols-3 gap-3 py-2">
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-1" style={{ background: "#B71C1C10" }}>
-                  <Clock className="h-4 w-4" style={{ color: "#B71C1C" }} />
-                </div>
-                <p className="text-sm font-bold font-serif" style={{ color: "#2C1810" }}>
-                  {formatTime(totalMinutes)}
-                </p>
-                <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                  Time
+            {/* Footer */}
+            <div className="px-7 py-4 flex-shrink-0 border-t border-dashed flex items-center justify-between" style={{ borderColor: "#B71C1C20" }}>
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3" style={{ color: "#B71C1C" }} />
+                <p className="text-[9px] italic font-serif" style={{ color: "#8B7355" }}>
+                  Study Notebook
                 </p>
               </div>
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-1" style={{ background: "#B71C1C10" }}>
-                  <TrendingUp className="h-4 w-4" style={{ color: "#B71C1C" }} />
-                </div>
-                <p className="text-sm font-bold font-serif" style={{ color: "#2C1810" }}>
-                  {sessionCount}
-                </p>
-                <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                  Sessions
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-1" style={{ background: "#B71C1C10" }}>
-                  <BookOpen className="h-4 w-4" style={{ color: "#B71C1C" }} />
-                </div>
-                <p className="text-sm font-bold font-serif" style={{ color: "#2C1810" }}>
-                  {subjectCount}
-                </p>
-                <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                  Subjects
-                </p>
-              </div>
-            </div>
-
-            {/* Subject breakdown if available */}
-            {stats && stats.sessionsBySubject.length > 0 && (
-              <div className="pt-1 pb-2">
-                <p className="text-[10px] uppercase tracking-wider font-medium mb-2" style={{ color: "#8B7355" }}>
-                  Time by Subject
-                </p>
-                <div className="space-y-1.5">
-                  {stats.sessionsBySubject.slice(0, 4).map((item) => (
-                    <div key={item.subjectName} className="flex items-center gap-2">
-                      <div
-                        className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: item.subjectColor }}
-                      />
-                      <span className="text-xs flex-1 truncate" style={{ color: "#2C1810" }}>
-                        {item.subjectName}
-                      </span>
-                      <span className="text-xs font-mono" style={{ color: "#8B7355" }}>
-                        {formatTime(item.minutes)}
-                      </span>
-                    </div>
-                  ))}
-                  {stats.sessionsBySubject.length > 4 && (
-                    <p className="text-[10px] text-center italic pt-1" style={{ color: "#8B7355" }}>
-                      + {stats.sessionsBySubject.length - 4} more subjects
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-3 border-t border-dashed" style={{ borderColor: "#B71C1C20" }}>
-            <div className="flex items-center justify-center gap-1.5">
-              <Sparkles className="h-3 w-3" style={{ color: "#B71C1C" }} />
-              <p className="text-[10px] italic font-serif" style={{ color: "#8B7355" }}>
-                Generated with Study Notebook
+              <p className="text-[8px] uppercase tracking-wider" style={{ color: "#B71C1C60" }}>
+                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </p>
             </div>
           </div>
