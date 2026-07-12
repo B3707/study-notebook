@@ -553,9 +553,10 @@ export default function Dashboard() {
                             </div>
                             <button
                               onClick={() => removeSubject({ id: subject._id })}
-                              className="p-1.5 rounded hover:bg-secondary text-muted-foreground/40 hover:text-destructive opacity-0 group-hover:opacity-100 transition-all"
+                              className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                              title="Delete subject"
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
+                              <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
                         </motion.div>
