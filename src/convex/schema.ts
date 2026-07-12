@@ -29,6 +29,8 @@ const schema = defineSchema(
       emailVerificationTime: v.optional(v.number()), // email verification time. do not remove
       isAnonymous: v.optional(v.boolean()), // is the user anonymous. do not remove
 
+      displayName: v.optional(v.string()), // display name for profile
+      bio: v.optional(v.string()), // short bio for profile
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
