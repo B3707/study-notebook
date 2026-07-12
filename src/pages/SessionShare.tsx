@@ -75,13 +75,6 @@ export default function SessionShare() {
         pixelRatio: 2,
         backgroundColor: "#FAF6F0",
         cacheBust: true,
-        width: 360,
-        height: 640,
-        style: {
-          margin: "0",
-          padding: "0",
-          transform: "none",
-        },
       });
       const link = document.createElement("a");
       const dateStr = new Date(session.date).toISOString().split("T")[0];
