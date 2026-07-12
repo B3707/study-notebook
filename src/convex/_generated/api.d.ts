@@ -11,7 +11,6 @@
 import type * as achievements from "../achievements.js";
 import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
-import type * as friends from "../friends.js";
 import type * as http from "../http.js";
 import type * as profile from "../profile.js";
 import type * as studySessions from "../studySessions.js";
@@ -29,7 +28,6 @@ declare const fullApi: ApiFromModules<{
   achievements: typeof achievements;
   auth: typeof auth;
   "auth/emailOtp": typeof auth_emailOtp;
-  friends: typeof friends;
   http: typeof http;
   profile: typeof profile;
   studySessions: typeof studySessions;

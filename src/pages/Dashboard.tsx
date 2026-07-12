@@ -8,7 +8,6 @@ import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
-import { SearchUsersDropdown } from "@/components/SearchUsersDropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,11 +43,10 @@ import {
   Info,
   Trophy,
   LogOut,
-  Users,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
-type Tab = "overview" | "subjects" | "tasks" | "timer" | "friends";
+type Tab = "overview" | "subjects" | "tasks" | "timer";
 
 const priorityColors: Record<Priority, string> = {
   low: "bg-chart-4/20 text-chart-4 border-chart-4/30",
@@ -84,9 +82,6 @@ export default function Dashboard() {
     date: new Date().toISOString().split("T")[0],
   });
   const stats = useQuery(api.studySessions.getStats);
-  const friends = useQuery(api.friends.list);
-  const friendRequests = useQuery(api.friends.listRequests);
-
   const createSubject = useMutation(api.subjects.create);
   const removeSubject = useMutation(api.subjects.remove);
   const createTask = useMutation(api.tasks.create);
@@ -94,10 +89,6 @@ export default function Dashboard() {
   const removeTask = useMutation(api.tasks.remove);
   const createSession = useMutation(api.studySessions.create);
   const removeSession = useMutation(api.studySessions.remove);
-  const sendFriendRequest = useMutation(api.friends.sendRequest);
-  const acceptFriendRequest = useMutation(api.friends.acceptRequest);
-  const removeFriend = useMutation(api.friends.remove);
-
   const [showProfile, setShowProfile] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
@@ -212,7 +203,6 @@ export default function Dashboard() {
     { key: "subjects", label: "Subjects", icon: BookOpen },
     { key: "tasks", label: "Tasks", icon: CheckSquare },
     { key: "timer", label: "Timer", icon: Timer },
-    { key: "friends", label: "Friends", icon: Users },
   ];
 
   return (
@@ -876,118 +866,6 @@ export default function Dashboard() {
                       </p>
                       <p className="text-sm text-muted-foreground/60 mt-1">
                         Create a task to start tracking your to-dos
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ==================== FRIENDS TAB ==================== */}
-              {activeTab === "friends" && (
-                <div className="space-y-6">
-                  <h2 className="font-serif font-bold text-xl text-foreground flex items-center gap-2">
-                    <Users className="h-5 w-5 text-accent" />
-                    Study Buddies
-                  </h2>
-
-                  {/* Search Users */}
-                  <div className="notebook-card rounded-lg p-5">
-                    <h3 className="font-serif font-semibold text-foreground text-sm mb-3 flex items-center gap-2">
-                      <User className="h-4 w-4 text-accent" />
-                      Find Students
-                    </h3>
-                    <SearchUsersDropdown onSendRequest={sendFriendRequest} />
-                  </div>
-
-                  {/* Pending Requests */}
-                  {friendRequests && friendRequests.length > 0 && (
-                    <div className="notebook-card rounded-lg p-5">
-                      <h3 className="font-serif font-semibold text-foreground text-sm mb-3 flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-accent" />
-                        Pending Requests ({friendRequests.length})
-                      </h3>
-                      <div className="space-y-2">
-                        {friendRequests.map((req) => (
-                          <div
-                            key={req._id}
-                            className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-secondary transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-serif font-bold">
-                                {(req.sender?.displayName || req.sender?.name || "?")[0].toUpperCase()}
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-foreground">
-                                  {req.sender?.displayName || req.sender?.name}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground/60 handwriting">
-                                  Wants to study together
-                                </p>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              onClick={() => acceptFriendRequest({ requestId: req._id })}
-                              className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs"
-                            >
-                              Accept
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Friends List */}
-                  {friends && friends.length > 0 ? (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        Your Friends ({friends.length})
-                      </h3>
-                      {friends.map((friend) => (
-                        <div
-                          key={friend._id}
-                          className="notebook-card rounded-lg p-4 flex items-center justify-between group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
-                              {(friend.displayName || friend.name || "?")[0].toUpperCase()}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">
-                                {friend.displayName || friend.name}
-                              </p>
-                              {friend.bio && (
-                                <p className="text-xs text-muted-foreground/70 mt-0.5 handwriting leading-relaxed">
-                                  {friend.bio}
-                                </p>
-                              )}
-                              {!friend.bio && (
-                                <p className="text-xs text-muted-foreground/40 mt-0.5 handwriting">
-                                  Study Buddy
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => removeFriend({ friendId: friend._id })}
-                            className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
-                            title="Remove friend"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 notebook-card rounded-lg">
-                      <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                      <p className="text-muted-foreground font-medium">
-                        No friends yet
-                      </p>
-                      <p className="text-sm text-muted-foreground/60 mt-1">
-                        Search for other students to connect with
                       </p>
                     </div>
                   )}

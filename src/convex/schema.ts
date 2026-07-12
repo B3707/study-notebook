@@ -71,18 +71,6 @@ const schema = defineSchema(
       .index("by_subject", ["subjectId"])
       .index("by_user_completed", ["userId", "completed"]),
 
-    // Friends / study buddies
-    friends: defineTable({
-      userId: v.id("users"),          // who sent the request
-      friendId: v.id("users"),         // who received it
-      status: v.union(v.literal("pending"), v.literal("accepted")),
-      createdAt: v.number(),
-    })
-      .index("by_userId", ["userId"])
-      .index("by_friendId", ["friendId"])
-      .index("by_userId_status", ["userId", "status"])
-      .index("by_friendId_status", ["friendId", "status"])
-      .index("by_user_pair", ["userId", "friendId"]),
   },
   {
     schemaValidation: false,
