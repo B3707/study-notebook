@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
+import { AchievementsModal } from "@/components/AchievementsModal";
 import { SearchUsersDropdown } from "@/components/SearchUsersDropdown";
 import {
   DropdownMenu,
@@ -41,6 +42,7 @@ import {
   Sun,
   User,
   Info,
+  Trophy,
   LogOut,
   Users,
 } from "lucide-react";
@@ -98,6 +100,7 @@ export default function Dashboard() {
 
   const [showProfile, setShowProfile] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -243,6 +246,13 @@ export default function Dashboard() {
                 >
                   <User className="mr-2 h-4 w-4" />
                   Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShowAchievements(true)}
+                  className="cursor-pointer"
+                >
+                  <Trophy className="mr-2 h-4 w-4 text-accent" />
+                  Achievements
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setShowAbout(true)}
@@ -1103,6 +1113,7 @@ export default function Dashboard() {
         </div>
       </div>
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
+      <AchievementsModal open={showAchievements} onOpenChange={setShowAchievements} />
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
     </div>
   );
