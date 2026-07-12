@@ -11,10 +11,8 @@ import {
   CheckCheck,
   Loader2,
   Clock,
-  BookOpen,
   TrendingUp,
   Sparkles,
-  Trophy,
 } from "lucide-react";
 
 function formatTime(minutes: number): string {
@@ -41,14 +39,14 @@ export function ShareStats() {
   const displayName = (user as any)?.displayName || user?.name || user?.email || "Student";
 
   const shareText =
-    `📚 Study Notebook Report\n\n` +
-    `👤 ${displayName}\n` +
-    `⏱️ Total Study Time: ${formatTime(totalMinutes)}\n` +
-    `📝 Sessions: ${sessionCount}\n` +
-    `📖 Subjects: ${subjectCount}\n\n` +
-    `Track your study journey at Study Notebook! 📓✨`;
+    "Study Notebook Report\n\n" +
+    displayName + "\n" +
+    "Total Time: " + formatTime(totalMinutes) + "\n" +
+    "Sessions: " + sessionCount + "\n" +
+    "Subjects: " + subjectCount + "\n\n" +
+    "studynotebook.freebuff.app";
 
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+  const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -61,7 +59,7 @@ export function ShareStats() {
         cacheBust: true,
       });
       const link = document.createElement("a");
-      link.download = `study-progress-${new Date().toISOString().split("T")[0]}.png`;
+      link.download = "study-progress-" + new Date().toISOString().split("T")[0] + ".png";
       link.href = dataUrl;
       link.click();
     } catch (error) {
@@ -76,25 +74,17 @@ export function ShareStats() {
     try {
       if (navigator.share && cardRef.current) {
         try {
-      const dataUrl = await toPng(cardRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: "#FAF6F0",
-        cacheBust: true,
-      });
-      const blob = await (await fetch(dataUrl)).blob();
+          const dataUrl = await toPng(cardRef.current, {
+            quality: 1,
+            pixelRatio: 2,
+            backgroundColor: "#FAF6F0",
+            cacheBust: true,
+          });
+          const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], "study-progress.png", { type: "image/png" });
-
-          await navigator.share({
-            title: "My Study Progress",
-            text: shareText,
-            files: [file],
-          });
+          await navigator.share({ title: "My Study Progress", text: shareText, files: [file] });
         } catch {
-          await navigator.share({
-            title: "My Study Progress",
-            text: shareText,
-          });
+          await navigator.share({ title: "My Study Progress", text: shareText });
         }
       } else {
         await navigator.clipboard.writeText(shareText);
@@ -120,34 +110,27 @@ export function ShareStats() {
           </h3>
           <div className="flex items-center gap-1.5">
             <Button
-              variant="ghost"
-              size="sm"
+              variant="ghost" size="sm"
               onClick={handleDownload}
               disabled={isDownloading || !hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
               title="Download as PNG"
             >
-              {isDownloading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Download className="h-3.5 w-3.5" />
-              )}
+              {isDownloading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
               PNG
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
+              variant="ghost" size="sm"
               onClick={() => window.open(twitterUrl, "_blank", "noopener,noreferrer")}
               disabled={!hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
-              title="Share on X (Twitter)"
+              title="Share on X"
             >
               <Twitter className="h-3.5 w-3.5" />
               X
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
+              variant="ghost" size="sm"
               onClick={handleShare}
               disabled={isSharing || !hasData}
               className="h-8 px-2.5 text-xs gap-1.5"
@@ -165,11 +148,10 @@ export function ShareStats() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground/60 mt-1 handwriting">
-          1080×1920px · 9:16 · Perfect for stories & socials
+          1080x1920px &middot; 9:16 &middot; Perfect for stories &amp; socials
         </p>
       </div>
 
-      {/* Stats Card Preview - 9:16 ratio */}
       <div className="px-5 pb-5 overflow-x-auto">
         <div className="flex justify-center">
           <div
@@ -178,121 +160,133 @@ export function ShareStats() {
             style={{
               width: 540,
               height: 960,
-              borderRadius: 16,
-              background: "#FAF6F0",
-              backgroundImage: `
-                repeating-linear-gradient(
-                  0deg,
-                  transparent,
-                  transparent 31px,
-                  rgba(183, 28, 28, 0.06) 31px,
-                  rgba(183, 28, 28, 0.06) 31.5px
-                )
-              `,
+              borderRadius: 20,
+              background: "linear-gradient(160deg, #FAF6F0 0%, #F5EDE0 40%, #F0E8D8 100%)",
+              boxShadow: "0 0 0 1px rgba(183, 28, 28, 0.08)",
+              position: "relative",
             }}
           >
-            {/* Top decorative stripe */}
-            <div className="h-1.5 flex-shrink-0" style={{ background: "linear-gradient(90deg, #B71C1C, #D32F2F, #B71C1C)" }} />
+            {/* Subtle corner glow */}
+            <div style={{
+              position: "absolute", top: 0, right: 0,
+              width: 100, height: 100,
+              background: "linear-gradient(225deg, rgba(183, 28, 28, 0.06), transparent)",
+              borderTopRightRadius: 20,
+            }} />
 
-            {/* Header */}
-            <div className="px-7 pt-7 pb-4 flex-shrink-0" style={{ background: "linear-gradient(180deg, #FAF6F0 0%, rgba(250, 246, 240, 0) 100%)" }}>
-              <div className="flex items-center justify-between">
+            {/* Brand mark */}
+            <div className="px-10 pt-10 pb-2 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div style={{
+                  width: 34, height: 34, borderRadius: 9,
+                  background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#FAF6F0", fontSize: 13, fontWeight: "bold",
+                  fontFamily: "Georgia, serif", flexShrink: 0,
+                }}>
+                  SN
+                </div>
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.25em] font-medium" style={{ color: "#8B7355" }}>
+                  <p style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                     Study Notebook
                   </p>
-                  <h2 className="text-2xl font-bold font-serif mt-1 leading-tight" style={{ color: "#2C1810" }}>
-                    {displayName}
-                  </h2>
-                  <p className="text-[11px] mt-0.5 italic font-serif" style={{ color: "#8B7355" }}>
-                    Study Progress Report
+                  <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
+                    studynotebook.freebuff.app
                   </p>
-                </div>
-                <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: "#B71C1C12" }}>
-                  📓
                 </div>
               </div>
             </div>
 
-            {/* Main stat hero */}
-            <div className="flex-1 flex flex-col justify-center px-7 py-2">
+            {/* Delicate divider */}
+            <div className="mx-10" style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(183, 28, 28, 0.12), transparent)" }} />
+
+            {/* Greeting */}
+            <div className="px-10 pt-6 pb-2 flex-shrink-0">
+              <p style={{ fontSize: 10, color: "#8B7355", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500, margin: 0 }}>
+                Study Progress Report
+              </p>
+              <h2 style={{ fontSize: 24, fontWeight: 700, fontFamily: "Georgia, 'Palatino Linotype', serif", color: "#2C1810", margin: "4px 0 0", letterSpacing: "-0.01em" }}>
+                {displayName}
+              </h2>
+            </div>
+
+            {/* Hero - Total Dedication */}
+            <div className="flex-1 flex flex-col justify-center px-10">
               <div className="text-center">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-4" style={{ background: "#B71C1C10" }}>
-                  <Clock className="h-3 w-3" style={{ color: "#B71C1C" }} />
-                  <span className="text-[10px] uppercase tracking-[0.15em] font-medium" style={{ color: "#B71C1C" }}>
-                    Total Study Time
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "6px 16px", borderRadius: 20,
+                  background: "rgba(183, 28, 28, 0.07)", marginBottom: 20,
+                }}>
+                  <Clock size={11} style={{ color: "#B71C1C" }} />
+                  <span style={{ fontSize: 9, letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: "#B71C1C" }}>
+                    Total Dedication
                   </span>
                 </div>
-                <p className="text-5xl md:text-6xl font-bold font-serif tracking-tight leading-none" style={{ color: "#2C1810" }}>
+
+                <p style={{
+                  fontSize: 58, fontWeight: 700,
+                  fontFamily: "Georgia, 'Palatino Linotype', serif",
+                  color: "#2C1810", margin: 0, lineHeight: 1, letterSpacing: "-0.02em",
+                }}>
                   {totalMinutes >= 60
-                    ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`
-                    : `${totalMinutes}m`}
+                    ? Math.floor(totalMinutes / 60) + "h " + (totalMinutes % 60) + "m"
+                    : totalMinutes + "m"}
                 </p>
-                <p className="text-xs mt-3 italic font-serif" style={{ color: "#8B7355" }}>
+                <p style={{ fontSize: 12, color: "#8B7355", margin: "8px 0 0", fontStyle: "italic", fontFamily: "Georgia, serif" }}>
                   across {sessionCount} session{sessionCount !== 1 ? "s" : ""}
                 </p>
               </div>
 
-              {/* Grid stats */}
-              <div className="grid grid-cols-3 gap-4 mt-6 mx-auto w-full max-w-xs">
-                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
-                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
-                    {formatTime(totalMinutes)}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                    Time
-                  </p>
-                </div>
-                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
-                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
-                    {sessionCount}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                    Sessions
-                  </p>
-                </div>
-                <div className="text-center px-2 py-3 rounded-xl" style={{ background: "#B71C1C08" }}>
-                  <p className="text-lg font-bold font-serif" style={{ color: "#2C1810" }}>
-                    {subjectCount}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "#8B7355" }}>
-                    Subjects
-                  </p>
-                </div>
+              {/* Stats Grid - Minimal */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8,
+                marginTop: 28, maxWidth: 320, marginLeft: "auto", marginRight: "auto", width: "100%",
+              }}>
+                {[
+                  { value: formatTime(totalMinutes), label: "Total Time" },
+                  { value: sessionCount, label: "Sessions" },
+                  { value: subjectCount, label: "Subjects" },
+                ].map((stat, i) => (
+                  <div key={stat.label} style={{
+                    textAlign: "center", padding: "14px 8px", borderRadius: 14,
+                    background: i === 0 ? "rgba(183, 28, 28, 0.06)" : "rgba(139, 115, 85, 0.06)",
+                  }}>
+                    <p style={{ fontSize: 18, fontWeight: 700, fontFamily: "Georgia, serif", color: "#2C1810", margin: 0 }}>
+                      {stat.value}
+                    </p>
+                    <p style={{ fontSize: 8, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8B7355", margin: "4px 0 0", fontWeight: 500 }}>
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
               </div>
 
-              {/* Subject breakdown */}
+              {/* Subject Bars */}
               {stats && stats.sessionsBySubject.length > 0 && (
-                <div className="mt-5 px-2">
-                  <p className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2 text-center" style={{ color: "#8B7355" }}>
-                    Time by Subject
+                <div style={{ marginTop: 24, padding: "0 8px" }}>
+                  <p style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: "#8B7355", marginBottom: 10, textAlign: "center" }}>
+                    By Subject
                   </p>
-                  <div className="space-y-1.5 max-w-xs mx-auto">
-                    {stats.sessionsBySubject.slice(0, 4).map((item, i) => (
-                      <div key={item.subjectName} className="flex items-center gap-2">
-                        <div
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: item.subjectColor }}
-                        />
-                        <span className="text-[11px] flex-1 truncate" style={{ color: "#2C1810" }}>
-                          {item.subjectName}
-                        </span>
-                        <div className="flex-1 max-w-[100px] h-1.5 rounded-full overflow-hidden mx-2" style={{ background: "#B71C1C10" }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${(item.minutes / totalMinutes) * 100}%`,
-                              backgroundColor: item.subjectColor,
-                            }}
-                          />
+                  <div style={{ maxWidth: 320, margin: "0 auto", display: "flex", flexDirection: "column", gap: 6 }}>
+                    {stats.sessionsBySubject.slice(0, 4).map(function(item) {
+                      return (
+                        <div key={item.subjectName} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: item.subjectColor, flexShrink: 0 }} />
+                          <span style={{ fontSize: 10, color: "#2C1810", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {item.subjectName}
+                          </span>
+                          <div style={{ flex: 1, maxWidth: 80, height: 4, borderRadius: 2, background: "rgba(183, 28, 28, 0.08)", overflow: "hidden" }}>
+                            <div style={{ height: "100%", borderRadius: 2, width: (item.minutes / totalMinutes) * 100 + "%", backgroundColor: item.subjectColor }} />
+                          </div>
+                          <span style={{ fontSize: 9, fontFamily: "monospace", color: "#8B7355", flexShrink: 0, minWidth: 36, textAlign: "right" }}>
+                            {formatTime(item.minutes)}
+                          </span>
                         </div>
-                        <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "#8B7355" }}>
-                          {formatTime(item.minutes)}
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {stats.sessionsBySubject.length > 4 && (
-                      <p className="text-[9px] text-center italic pt-1" style={{ color: "#8B7355" }}>
+                      <p style={{ fontSize: 8, textAlign: "center", fontStyle: "italic", color: "#8B7355", margin: "4px 0 0" }}>
                         + {stats.sessionsBySubject.length - 4} more subjects
                       </p>
                     )}
@@ -302,21 +296,23 @@ export function ShareStats() {
             </div>
 
             {/* Footer */}
-            <div className="px-7 py-4 flex-shrink-0 border-t border-dashed flex items-center justify-between" style={{ borderColor: "#B71C1C20" }}>
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="h-3 w-3" style={{ color: "#B71C1C" }} />
-                <p className="text-[9px] italic font-serif" style={{ color: "#8B7355" }}>
-                  Study Notebook
-                </p>
+            <div className="px-10 py-5 flex-shrink-0 flex items-center justify-between" style={{ borderTop: "1px solid rgba(183, 28, 28, 0.1)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%",
+                  background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#FAF6F0", fontSize: 9, fontWeight: "bold", fontFamily: "Georgia, serif",
+                }}>
+                  {displayName[0].toUpperCase()}
+                </div>
+                <span style={{ fontSize: 9, fontFamily: "Georgia, serif", fontStyle: "italic", color: "#8B7355" }}>
+                  {displayName}
+                </span>
               </div>
-              <div className="text-right">
-                <p className="text-[8px] uppercase tracking-wider" style={{ color: "#B71C1C60" }}>
-                  {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </p>
-                <p className="text-[6px] tracking-wider" style={{ color: "#B71C1C40" }}>
-                  studynotebook.freebuff.app
-                </p>
-              </div>
+              <span style={{ fontSize: 7, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.35)" }}>
+                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </span>
             </div>
           </div>
         </div>
