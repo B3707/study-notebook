@@ -71,6 +71,20 @@ const schema = defineSchema(
       .index("by_subject", ["subjectId"])
       .index("by_user_completed", ["userId", "completed"]),
 
+    // Study notes with AI-generated questions and mind maps
+    notes: defineTable({
+      userId: v.id("users"),
+      subjectId: v.optional(v.id("subjects")),
+      title: v.string(),
+      content: v.string(),
+      questions: v.optional(v.array(v.string())),  // AI-generated questions
+      mindMap: v.optional(v.string()),               // AI-generated mind map JSON
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_user", ["userId"])
+      .index("by_subject", ["subjectId"])
+      .index("by_user_updated", ["userId", "updatedAt"]),
   },
   {
     schemaValidation: false,
