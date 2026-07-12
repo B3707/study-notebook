@@ -61,6 +61,22 @@ export const create = mutation({
   },
 });
 
+export const getSession = query({
+  args: { id: v.id("studySessions") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+    const session = await ctx.db.get(args.id);
+    if (!session || session.userId !== user._id) throw new Error("Not found");
+    const subject = await ctx.db.get(session.subjectId);
+    return {
+      ...session,
+      subjectName: subject?.name ?? "Unknown",
+      subjectColor: subject?.color ?? "#666",
+    };
+  },
+});
+
 export const remove = mutation({
   args: {
     id: v.id("studySessions"),

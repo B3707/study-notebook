@@ -9,7 +9,6 @@ import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { ShareStats } from "@/components/ShareStats";
-import { SessionShareCard } from "@/components/SessionShareCard";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -45,6 +44,7 @@ import {
   Info,
   Trophy,
   LogOut,
+  FileImage,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
@@ -427,15 +427,13 @@ export default function Dashboard() {
                               <Badge variant="outline" className="text-xs">
                                 {formatTime(session.duration)}
                               </Badge>
-                              <SessionShareCard
-                                sessionName="Study Session"
-                                subjectName={session.subjectName}
-                                subjectColor={session.subjectColor}
-                                duration={session.duration}
-                                notes={session.notes}
-                                date={session.date}
-                                displayName={((user as any)?.displayName || user?.name || user?.email || "Student")}
-                              />
+                              <Link
+                                to={`/share/session/${session._id}`}
+                                className="p-1 rounded hover:bg-secondary text-muted-foreground hover:text-accent transition-colors"
+                                title="View and download session image"
+                              >
+                                <FileImage className="h-3.5 w-3.5" />
+                              </Link>
                               <button
                                 onClick={() => removeSession({ id: session._id })}
                                 className="p-1 rounded hover:bg-secondary text-muted-foreground hover:text-destructive transition-colors"

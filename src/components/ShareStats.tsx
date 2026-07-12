@@ -306,9 +306,14 @@ export function ShareStats() {
                   Study Notebook
                 </p>
               </div>
-              <p className="text-[8px] uppercase tracking-wider" style={{ color: "#B71C1C60" }}>
-                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </p>
+              <div className="text-right">
+                <p className="text-[8px] uppercase tracking-wider" style={{ color: "#B71C1C60" }}>
+                  {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </p>
+                <p className="text-[6px] tracking-wider" style={{ color: "#B71C1C40" }}>
+                  studynotebook.freebuff.app
+                </p>
+              </div>
             </div>
           </div>
         </div>
