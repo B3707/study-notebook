@@ -9,7 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowRight, Loader2, UserX, BookOpen, KeyRound } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { ArrowRight, Loader2, UserX, BookOpen, KeyRound, Moon, Sun } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -19,6 +20,7 @@ interface AuthProps {
 
 function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [username, setUsername] = useState("");
@@ -94,13 +96,24 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b border-border/60 bg-card/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <BookOpen className="h-4 w-4" />
             <span className="font-serif">Study Notebook</span>
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </button>
         </div>
       </header>

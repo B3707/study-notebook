@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +27,8 @@ import {
   ListChecks,
   GripVertical,
   ArrowLeft,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
@@ -56,6 +59,7 @@ function formatDate(dateStr: string): string {
 
 export default function Dashboard() {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const subjects = useQuery(api.subjects.list);
@@ -199,6 +203,17 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
             {user?.name && (
               <span className="text-sm text-muted-foreground hidden md:block">
                 {user.name}
