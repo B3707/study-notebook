@@ -9,6 +9,7 @@ import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { ShareStats } from "@/components/ShareStats";
+import { SessionShareCard } from "@/components/SessionShareCard";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -426,6 +427,15 @@ export default function Dashboard() {
                               <Badge variant="outline" className="text-xs">
                                 {formatTime(session.duration)}
                               </Badge>
+                              <SessionShareCard
+                                sessionName="Study Session"
+                                subjectName={session.subjectName}
+                                subjectColor={session.subjectColor}
+                                duration={session.duration}
+                                notes={session.notes}
+                                date={session.date}
+                                displayName={((user as any)?.displayName || user?.name || user?.email || "Student")}
+                              />
                               <button
                                 onClick={() => removeSession({ id: session._id })}
                                 className="p-1 rounded hover:bg-secondary text-muted-foreground hover:text-destructive transition-colors"
