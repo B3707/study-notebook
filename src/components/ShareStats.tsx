@@ -58,6 +58,14 @@ export function ShareStats() {
         quality: 1,
         pixelRatio: 2,
         backgroundColor: "#FAF6F0",
+        cacheBust: true,
+        width: 360,
+        height: 640,
+        style: {
+          margin: "0",
+          padding: "0",
+          transform: "none",
+        },
       });
       const link = document.createElement("a");
       link.download = `study-progress-${new Date().toISOString().split("T")[0]}.png`;
@@ -75,12 +83,20 @@ export function ShareStats() {
     try {
       if (navigator.share && cardRef.current) {
         try {
-          const dataUrl = await toPng(cardRef.current, {
-            quality: 1,
-            pixelRatio: 2,
-            backgroundColor: "#FAF6F0",
-          });
-          const blob = await (await fetch(dataUrl)).blob();
+      const dataUrl = await toPng(cardRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: "#FAF6F0",
+        cacheBust: true,
+        width: 360,
+        height: 640,
+        style: {
+          margin: "0",
+          padding: "0",
+          transform: "none",
+        },
+      });
+      const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], "study-progress.png", { type: "image/png" });
 
           await navigator.share({
@@ -172,10 +188,11 @@ export function ShareStats() {
         <div className="flex justify-center">
           <div
             ref={cardRef}
-            className="rounded-2xl overflow-hidden border border-border/40 shadow-lg flex-shrink-0 flex flex-col"
+            className="flex-shrink-0 flex flex-col"
             style={{
               width: 360,
               height: 640,
+              borderRadius: 16,
               background: "#FAF6F0",
               backgroundImage: `
                 repeating-linear-gradient(

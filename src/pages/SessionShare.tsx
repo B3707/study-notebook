@@ -74,6 +74,14 @@ export default function SessionShare() {
         quality: 1,
         pixelRatio: 2,
         backgroundColor: "#FAF6F0",
+        cacheBust: true,
+        width: 360,
+        height: 640,
+        style: {
+          margin: "0",
+          padding: "0",
+          transform: "none",
+        },
       });
       const link = document.createElement("a");
       const dateStr = new Date(session.date).toISOString().split("T")[0];
@@ -198,10 +206,11 @@ export default function SessionShare() {
             <div className="flex-shrink-0">
               <div
                 ref={cardRef}
-                className="rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-border/40"
+                className="flex flex-col"
                 style={{
                   width: 360,
                   height: 640,
+                  borderRadius: 16,
                   background: "#FAF6F0",
                   backgroundImage: `
                     repeating-linear-gradient(
@@ -216,14 +225,18 @@ export default function SessionShare() {
               >
                 {/* Top gradient stripe */}
                 <div
-                  className="h-2 flex-shrink-0 relative overflow-hidden"
+                  className="h-2 flex-shrink-0 relative"
                   style={{
+                    borderTopLeftRadius: 15,
+                    borderTopRightRadius: 15,
                     background: `linear-gradient(90deg, ${subjectColor}44, ${subjectColor}, ${subjectColor}, ${subjectColor}44)`,
                   }}
                 >
                   <div
                     className="absolute inset-0"
                     style={{
+                      borderTopLeftRadius: 15,
+                      borderTopRightRadius: 15,
                       background: `repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(255,255,255,0.15) 12px, rgba(255,255,255,0.15) 13px)`,
                     }}
                   />
@@ -320,8 +333,8 @@ export default function SessionShare() {
 
                 {/* Footer */}
                 <div
-                  className="px-8 py-4 flex-shrink-0 border-t border-dashed flex items-center justify-between"
-                  style={{ borderColor: `${subjectColor}20` }}
+                  className="px-8 py-4 flex-shrink-0 flex items-center justify-between"
+                  style={{ borderTop: `1px dashed ${subjectColor}30` }}
                 >
                   <div className="flex items-center gap-2">
                     <div
