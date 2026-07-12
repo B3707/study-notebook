@@ -47,7 +47,7 @@ export function SearchUsersDropdown({ onSendRequest }: SearchUsersDropdownProps)
       <Input
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search by name..."
+        placeholder="Search by username or name..."
         className="bg-background"
       />
       {searchQuery.trim().length >= 2 && searchResults && searchResults.length > 0 && (
@@ -59,11 +59,16 @@ export function SearchUsersDropdown({ onSendRequest }: SearchUsersDropdownProps)
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-serif font-bold">
-                  {(result.displayName || result.name || "?")[0].toUpperCase()}
+                  {((result as any).displayName || result.name || result.email || "?")[0].toUpperCase()}
                 </div>
-                <span className="text-sm text-foreground">
-                  {result.displayName || result.name}
-                </span>
+                <div>
+                  <span className="text-sm text-foreground">
+                    {(result as any).displayName || result.name || (result as any).email || "Student"}
+                  </span>
+                  <p className="text-[10px] text-muted-foreground/60 handwriting">
+                    @{(result as any).email || "unknown"}
+                  </p>
+                </div>
               </div>
               <Button
                 size="sm"

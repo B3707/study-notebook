@@ -108,12 +108,14 @@ export const searchUsers = query({
           !u.isAnonymous &&
           !existingIds.has(u._id) &&
           ((u.displayName && u.displayName.toLowerCase().includes(q)) ||
-            (u.name && u.name.toLowerCase().includes(q))),
+            (u.name && u.name.toLowerCase().includes(q)) ||
+            (u.email && u.email.toLowerCase().includes(q))),
       )
       .map((u) => ({
         _id: u._id,
         name: u.name,
         displayName: u.displayName,
+        email: u.email,
       }));
   },
 });
