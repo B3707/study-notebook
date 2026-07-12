@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 import {
   BookOpen,
   Clock,
@@ -15,9 +16,15 @@ import {
 } from "lucide-react";
 
 export default function Landing() {
-  const { isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isLoading, isAuthenticated, navigate]);
 
   const features = [
     {
