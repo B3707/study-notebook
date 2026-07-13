@@ -106,11 +106,26 @@ export default function Dashboard() {
   const [newTaskPriority, setNewTaskPriority] = useState<Priority>("medium");
 
   // Timer state
+  const [timerMode, setTimerMode] = useState<"free" | "pomodoro">("free");
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timerSubject, setTimerSubject] = useState("");
   const [timerNotes, setTimerNotes] = useState("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Pomodoro state
+  const [pomodoroPhase, setPomodoroPhase] = useState<"focus" | "break">("focus");
+  const [focusMinutes, setFocusMinutes] = useState(25);
+  const [breakMinutes, setBreakMinutes] = useState(5);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [pomodoroPhaseNotified, setPomodoroPhaseNotified] = useState(false);
+
+  const focusSeconds = focusMinutes * 60;
+  const breakSeconds = breakMinutes * 60;
+
+  const pomodoroDisplaySeconds = pomodoroPhase === "focus"
+    ? Math.max(0, focusSeconds - timerSeconds)
+    : Math.max(0, breakSeconds - timerSeconds);
 
   const today = new Date().toISOString().split("T")[0];
   const activeTasks = tasks?.filter((t) => !t.completed) ?? [];
@@ -137,24 +152,90 @@ export default function Dashboard() {
     };
   }, [timerRunning]);
 
+  // Pomodoro phase completion detection
+  useEffect(() => {
+    if (timerMode !== "pomodoro" || !timerRunning) {
+      setPomodoroPhaseNotified(false);
+      return;
+    }
+
+    if (pomodoroPhase === "focus" && timerSeconds >= focusSeconds) {
+      // Focus session completed - switch to break
+      setTimerRunning(false);
+      setTimerSeconds(0);
+      setPomodoroPhase("break");
+      setPomodoroCount((c) => c + 1);
+      setPomodoroPhaseNotified(true);
+
+      // Log the focus session
+      const minutes = Math.max(1, Math.round(focusSeconds / 60));
+      if (timerSubject) {
+        createSession({
+          subjectId: timerSubject as any,
+          duration: minutes,
+          date: today,
+          notes: timerNotes ? `${timerNotes} (Pomodoro ${pomodoroCount + 1})` : `Pomodoro ${pomodoroCount + 1}`,
+        }).catch(console.error);
+      }
+    } else if (pomodoroPhase === "break" && timerSeconds >= breakSeconds) {
+      // Break completed - switch to focus
+      setTimerRunning(false);
+      setTimerSeconds(0);
+      setPomodoroPhase("focus");
+      setPomodoroPhaseNotified(true);
+    }
+  }, [timerSeconds, timerRunning, timerMode, pomodoroPhase, focusSeconds, breakSeconds, timerSubject, timerNotes, pomodoroCount, today, createSession]);
+
+  // Auto-start next phase after pomodoro phase completion
+  useEffect(() => {
+    if (timerMode === "pomodoro" && pomodoroPhaseNotified && !timerRunning) {
+      // Notification
+      try {
+        const msg = pomodoroPhase === "focus" ? "Focus time! Let's study." : "Break time! Rest a bit.";
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(msg);
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch {}
+    }
+  }, [pomodoroPhaseNotified, timerRunning, timerMode, pomodoroPhase]);
+
   const handleStartTimer = () => {
     if (!timerSubject) return;
+    if (timerMode === "pomodoro") {
+      setTimerSeconds(0);
+      setPomodoroPhase("focus");
+      setPomodoroPhaseNotified(false);
+    }
     setTimerRunning(true);
   };
 
   const handleStopTimer = async () => {
     setTimerRunning(false);
-    const minutes = Math.max(1, Math.round(timerSeconds / 60));
-    if (minutes > 0 && timerSubject) {
-      await createSession({
-        subjectId: timerSubject as any,
-        duration: minutes,
-        date: today,
-        notes: timerNotes || undefined,
-      });
+    if (timerMode === "free") {
+      const minutes = Math.max(1, Math.round(timerSeconds / 60));
+      if (minutes > 0 && timerSubject) {
+        await createSession({
+          subjectId: timerSubject as any,
+          duration: minutes,
+          date: today,
+          notes: timerNotes || undefined,
+        });
+      }
     }
     setTimerSeconds(0);
     setTimerNotes("");
+  };
+
+  const handleResetTimer = () => {
+    setTimerRunning(false);
+    setTimerSeconds(0);
+    setPomodoroPhase("focus");
+    if (timerMode === "pomodoro") {
+      setPomodoroCount(0);
+    }
   };
 
   const handleCreateSubject = async () => {
@@ -887,9 +968,41 @@ export default function Dashboard() {
               {/* ==================== TIMER TAB ==================== */}
               {activeTab === "timer" && (
                 <div className="space-y-6">
-                  <h2 className="font-serif font-bold text-xl text-foreground">
-                    Study Timer
-                  </h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-serif font-bold text-xl text-foreground">
+                      Study Timer
+                    </h2>
+                    <div className="flex items-center gap-1 bg-secondary rounded-lg p-0.5">
+                      <button
+                        onClick={() => {
+                          setTimerMode("free");
+                          handleResetTimer();
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                          timerMode === "free"
+                            ? "bg-card text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <Timer className="h-3.5 w-3.5 inline mr-1" />
+                        Free
+                      </button>
+                      <button
+                        onClick={() => {
+                          setTimerMode("pomodoro");
+                          handleResetTimer();
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                          timerMode === "pomodoro"
+                            ? "bg-card text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <Target className="h-3.5 w-3.5 inline mr-1" />
+                        Pomodoro
+                      </button>
+                    </div>
+                  </div>
 
                   {subjects && subjects.length === 0 ? (
                     <div className="notebook-card rounded-lg p-8 text-center max-w-lg mx-auto">
@@ -909,20 +1022,141 @@ export default function Dashboard() {
                       </Button>
                     </div>
                   ) : (
-                    <div className="notebook-card rounded-lg p-8 md:p-12 text-center max-w-lg mx-auto">
+                    <div className="notebook-card rounded-lg p-8 md:p-10 text-center max-w-lg mx-auto">
+                      {/* Pomodoro Settings (only when not running) */}
+                      {timerMode === "pomodoro" && !timerRunning && (
+                        <div className="mb-6 grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[10px] text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">
+                              Focus (min)
+                            </label>
+                            <div className="flex items-center gap-1 justify-center">
+                              <button
+                                onClick={() => setFocusMinutes(Math.max(1, focusMinutes - 5))}
+                                className="w-8 h-8 rounded-md bg-secondary hover:bg-secondary/80 text-foreground flex items-center justify-center text-sm transition-colors"
+                                disabled={timerRunning}
+                              >
+                                -
+                              </button>
+                              <span className="w-14 text-center font-mono text-lg font-bold text-foreground">
+                                {focusMinutes}
+                              </span>
+                              <button
+                                onClick={() => setFocusMinutes(Math.min(120, focusMinutes + 5))}
+                                className="w-8 h-8 rounded-md bg-secondary hover:bg-secondary/80 text-foreground flex items-center justify-center text-sm transition-colors"
+                                disabled={timerRunning}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">
+                              Break (min)
+                            </label>
+                            <div className="flex items-center gap-1 justify-center">
+                              <button
+                                onClick={() => setBreakMinutes(Math.max(1, breakMinutes - 1))}
+                                className="w-8 h-8 rounded-md bg-secondary hover:bg-secondary/80 text-foreground flex items-center justify-center text-sm transition-colors"
+                                disabled={timerRunning}
+                              >
+                                -
+                              </button>
+                              <span className="w-14 text-center font-mono text-lg font-bold text-foreground">
+                                {breakMinutes}
+                              </span>
+                              <button
+                                onClick={() => setBreakMinutes(Math.min(30, breakMinutes + 1))}
+                                className="w-8 h-8 rounded-md bg-secondary hover:bg-secondary/80 text-foreground flex items-center justify-center text-sm transition-colors"
+                                disabled={timerRunning}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Phase Badge for Pomodoro */}
+                      {timerMode === "pomodoro" && (
+                        <div className="mb-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+                              pomodoroPhase === "focus"
+                                ? "bg-primary/10 text-primary border border-primary/20"
+                                : "bg-chart-4/10 text-chart-4 border border-chart-4/20"
+                            }`}
+                          >
+                            <div
+                              className={`w-2 h-2 rounded-full ${
+                                pomodoroPhase === "focus"
+                                  ? "bg-primary"
+                                  : "bg-chart-4"
+                              } ${timerRunning ? "animate-pulse" : ""}`}
+                            />
+                            {pomodoroPhase === "focus" ? "Focus Time" : "Break Time"}
+                          </span>
+                          {pomodoroCount > 0 && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              #{pomodoroCount}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
                       {/* Timer Display */}
                       <div className="mb-8">
-                        <div className="text-6xl md:text-7xl font-mono font-bold text-foreground tracking-wider">
-                          {String(Math.floor(timerSeconds / 60)).padStart(2, "0")}:
-                          {String(timerSeconds % 60).padStart(2, "0")}
+                        <div
+                          className={`text-6xl md:text-7xl font-mono font-bold tracking-wider transition-colors duration-500 ${
+                            timerMode === "pomodoro" && pomodoroPhase === "break"
+                              ? "text-chart-4"
+                              : "text-foreground"
+                          }`}
+                        >
+                          {timerMode === "pomodoro"
+                            ? `${String(Math.floor(pomodoroDisplaySeconds / 60)).padStart(2, "0")}:${String(pomodoroDisplaySeconds % 60).padStart(2, "0")}`
+                            : `${String(Math.floor(timerSeconds / 60)).padStart(2, "0")}:${String(timerSeconds % 60).padStart(2, "0")}`
+                          }
                         </div>
                         <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest">
-                          {timerRunning ? "Studying..." : "Ready to study"}
+                          {timerRunning
+                            ? timerMode === "pomodoro"
+                              ? pomodoroPhase === "focus"
+                                ? "Studying..."
+                                : "Resting..."
+                              : "Studying..."
+                            : timerMode === "pomodoro"
+                              ? pomodoroPhase === "focus"
+                                ? "Ready to focus"
+                                : "Ready for break"
+                              : "Ready to study"}
                         </p>
                       </div>
 
+                      {/* Progress bar for Pomodoro */}
+                      {timerMode === "pomodoro" && timerRunning && (
+                        <div className="mb-6">
+                          <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{
+                                width: `${pomodoroPhase === "focus"
+                                  ? ((focusSeconds - pomodoroDisplaySeconds) / focusSeconds) * 100
+                                  : ((breakSeconds - pomodoroDisplaySeconds) / breakSeconds) * 100}%`,
+                              }}
+                              transition={{ duration: 1, ease: "linear" }}
+                              className={`h-full rounded-full ${
+                                pomodoroPhase === "focus"
+                                  ? "bg-primary"
+                                  : "bg-chart-4"
+                              }`}
+                            />
+                          </div>
+                        </div>
+                      )}
+
                       {/* Subject Selector */}
-                      <div className="mb-6">
+                      <div className="mb-4">
                         <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider text-left">
                           Select Subject
                         </label>
@@ -956,16 +1190,33 @@ export default function Dashboard() {
                       </div>
 
                       {/* Timer Controls */}
-                      <div className="flex items-center justify-center gap-4">
+                      <div className="flex items-center justify-center gap-3">
                         {!timerRunning ? (
-                          <Button
-                            onClick={handleStartTimer}
-                            disabled={!timerSubject}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md px-8 py-6"
-                          >
-                            <Play className="h-5 w-5 mr-2" />
-                            Start Studying
-                          </Button>
+                          <>
+                            <Button
+                              onClick={handleStartTimer}
+                              disabled={!timerSubject}
+                              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md px-8 py-6"
+                            >
+                              <Play className="h-5 w-5 mr-2" />
+                              {timerMode === "pomodoro" && pomodoroPhase === "break"
+                                ? "Start Break"
+                                : timerMode === "pomodoro"
+                                  ? "Start Focus"
+                                  : "Start Studying"
+                              }
+                            </Button>
+                            {timerMode === "pomodoro" && timerSeconds > 0 && (
+                              <Button
+                                onClick={handleResetTimer}
+                                variant="ghost"
+                                className="px-3 py-6 text-muted-foreground"
+                                title="Reset timer"
+                              >
+                                <StopCircle className="h-5 w-5" />
+                              </Button>
+                            )}
+                          </>
                         ) : (
                           <>
                             <Button
@@ -981,7 +1232,7 @@ export default function Dashboard() {
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md px-6 py-6"
                             >
                               <StopCircle className="h-5 w-5 mr-2" />
-                              Stop & Save
+                              {timerMode === "pomodoro" ? "Stop" : "Stop & Save"}
                             </Button>
                           </>
                         )}
@@ -992,9 +1243,16 @@ export default function Dashboard() {
                   {/* Quick stats */}
                   <div className="text-center">
                     <hr className="notebook-divider max-w-xs mx-auto mb-4" />
-                    <p className="text-xs text-muted-foreground handwriting">
-                      Today: {formatTime(todaySessions?.reduce((s, sess) => s + sess.duration, 0) ?? 0)} studied
-                    </p>
+                    <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
+                      <p className="handwriting">
+                        Today: {formatTime(todaySessions?.reduce((s, sess) => s + sess.duration, 0) ?? 0)} studied
+                      </p>
+                      {timerMode === "pomodoro" && (
+                        <p className="handwriting">
+                          Pomodoros: {pomodoroCount}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
