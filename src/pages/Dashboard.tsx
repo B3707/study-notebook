@@ -204,7 +204,6 @@ export default function Dashboard() {
     if (!timerSubject) return;
     if (timerMode === "pomodoro") {
       setTimerSeconds(0);
-      setPomodoroPhase("focus");
     }
     setTimerRunning(true);
   };
