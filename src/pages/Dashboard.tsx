@@ -118,7 +118,6 @@ export default function Dashboard() {
   const [focusMinutes, setFocusMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
   const [pomodoroCount, setPomodoroCount] = useState(0);
-  const [pomodoroPhaseNotified, setPomodoroPhaseNotified] = useState(false);
 
   const focusSeconds = focusMinutes * 60;
   const breakSeconds = breakMinutes * 60;
@@ -152,12 +151,9 @@ export default function Dashboard() {
     };
   }, [timerRunning]);
 
-  // Pomodoro phase completion detection
+  // Pomodoro phase completion detection & notification (single effect)
   useEffect(() => {
-    if (timerMode !== "pomodoro" || !timerRunning) {
-      setPomodoroPhaseNotified(false);
-      return;
-    }
+    if (timerMode !== "pomodoro" || !timerRunning) return;
 
     if (pomodoroPhase === "focus" && timerSeconds >= focusSeconds) {
       // Focus session completed - switch to break
@@ -165,7 +161,16 @@ export default function Dashboard() {
       setTimerSeconds(0);
       setPomodoroPhase("break");
       setPomodoroCount((c) => c + 1);
-      setPomodoroPhaseNotified(true);
+
+      // Speak notification
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance("Break time! Rest a bit.");
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch {}
 
       // Log the focus session
       const minutes = Math.max(1, Math.round(focusSeconds / 60));
@@ -182,32 +187,24 @@ export default function Dashboard() {
       setTimerRunning(false);
       setTimerSeconds(0);
       setPomodoroPhase("focus");
-      setPomodoroPhaseNotified(true);
-    }
-  }, [timerSeconds, timerRunning, timerMode, pomodoroPhase, focusSeconds, breakSeconds, timerSubject, timerNotes, pomodoroCount, today, createSession]);
 
-  // Auto-start next phase after pomodoro phase completion
-  useEffect(() => {
-    if (timerMode === "pomodoro" && pomodoroPhaseNotified && !timerRunning) {
-      // Notification
+      // Speak notification
       try {
-        const msg = pomodoroPhase === "focus" ? "Focus time! Let's study." : "Break time! Rest a bit.";
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(msg);
+          const utterance = new SpeechSynthesisUtterance("Focus time! Let's study.");
           utterance.rate = 0.9;
           window.speechSynthesis.speak(utterance);
         }
       } catch {}
     }
-  }, [pomodoroPhaseNotified, timerRunning, timerMode, pomodoroPhase]);
+  }, [timerSeconds, timerRunning, timerMode, pomodoroPhase, focusSeconds, breakSeconds, timerSubject, timerNotes, pomodoroCount, today, createSession]);
 
   const handleStartTimer = () => {
     if (!timerSubject) return;
     if (timerMode === "pomodoro") {
       setTimerSeconds(0);
       setPomodoroPhase("focus");
-      setPomodoroPhaseNotified(false);
     }
     setTimerRunning(true);
   };
