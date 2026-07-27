@@ -55,9 +55,7 @@ export default function Landing() {
       <header className="border-b border-border/60 bg-card/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center shadow-sm">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img src="/logo.png" alt="Study Notebook Logo" className="w-9 h-9 rounded-lg shadow-sm object-cover" />
             <span className="text-lg font-serif tracking-tight text-foreground">
               Study Notebook
             </span>
@@ -262,7 +260,7 @@ export default function Landing() {
       <footer className="border-t border-border/60 bg-card/80">
         <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+            <img src="/logo.png" alt="Logo" className="w-4 h-4 rounded object-cover" />
             <span className="font-serif">Study Notebook</span>
           </div>
           <p className="handwriting text-xs">— keep learning —</p>
