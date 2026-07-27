@@ -48,3 +48,19 @@ export const getImageUrl = query({
     }
   },
 });
+
+/**
+ * Same as getImageUrl but as a mutation so it can be called imperatively
+ * from the client without useQuery.
+ */
+export const getImageUrlDirect = mutation({
+  args: { storageId: v.string() },
+  handler: async (ctx, args) => {
+    if (!args.storageId) return null;
+    try {
+      return await ctx.storage.getUrl(args.storageId as any);
+    } catch {
+      return null;
+    }
+  },
+});

@@ -11,8 +11,8 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { BookOpen, Loader2, Save } from "lucide-react";
-import { useState, useEffect } from "react";
+import { BookOpen, Camera, Loader2, Save, Trash2, Upload } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 interface ProfileModalProps {
   open: boolean;
@@ -22,17 +22,75 @@ interface ProfileModalProps {
 export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
   const { user } = useAuth();
   const updateProfile = useMutation(api.profile.update);
+  const generateUploadUrl = useMutation(api.profile.generateUploadUrl);
+  const getImageUrlDirect = useMutation(api.profile.getImageUrlDirect);
+
+  const profilePictureStorageId = (user as any)?.profilePicture as string | undefined;
 
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const currentImageUrl = localPreview || profileImageUrl;
+
+  // Fetch the profile picture URL when the modal opens or storageId changes
   useEffect(() => {
-    if (open && user) {
+    if (open) {
+      if (profilePictureStorageId) {
+        getImageUrlDirect({ storageId: profilePictureStorageId })
+          .then((url) => setProfileImageUrl(url))
+          .catch(() => setProfileImageUrl(null));
+      } else {
+        setProfileImageUrl(null);
+      }
+      setLocalPreview(null);
       setDisplayName((user as any).displayName || "");
       setBio((user as any).bio || "");
     }
-  }, [open, user]);
+  }, [open, profilePictureStorageId, user]);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    setLocalPreview(localUrl);
+
+    // Upload to Convex storage
+    setIsUploading(true);
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = await result.json();
+      await updateProfile({ profilePicture: storageId });
+      // Fetch the URL for the new storageId
+      const url = await getImageUrlDirect({ storageId });
+      setProfileImageUrl(url);
+    } catch (error) {
+      console.error("Failed to upload profile picture:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemovePicture = async () => {
+    setLocalPreview(null);
+    setProfileImageUrl(null);
+    try {
+      await updateProfile({ profilePicture: "" });
+    } catch (error) {
+      console.error("Failed to remove profile picture:", error);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -65,6 +123,65 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
         <hr className="notebook-divider my-2" />
 
         <div className="space-y-4">
+          {/* Profile Picture */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative group">
+              <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-serif font-bold text-xl ring-2 ring-border/40 ring-offset-2 ring-offset-background overflow-hidden">
+                {currentImageUrl ? (
+                  <img
+                    src={currentImageUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  (displayName || user?.name || user?.email || "?")[0].toUpperCase()
+                )}
+              </div>
+              {/* Overlay on hover */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="absolute inset-0 rounded-full bg-foreground/0 hover:bg-foreground/40 transition-colors flex items-center justify-center opacity-0 hover:opacity-100"
+              >
+                {isUploading ? (
+                  <Loader2 className="h-6 w-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="text-xs"
+              >
+                <Upload className="h-3.5 w-3.5 mr-1" />
+                {currentImageUrl ? "Change" : "Upload Photo"}
+              </Button>
+              {currentImageUrl && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRemovePicture}
+                  className="text-xs text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1" />
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
+
           {/* Username (read-only) */}
           <div>
             <label className="block text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wider">
@@ -112,14 +229,22 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
             </p>
           </div>
 
-          {/* Stats preview */}
+          {/* Profile preview */}
           <div className="bg-secondary/50 rounded-lg p-3">
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
               Profile Preview
             </p>
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-serif font-bold text-sm flex-shrink-0">
-                {(displayName || user?.name || user?.email || "?")[0].toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-serif font-bold text-sm flex-shrink-0 overflow-hidden">
+                {currentImageUrl ? (
+                  <img
+                    src={currentImageUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  (displayName || user?.name || user?.email || "?")[0].toUpperCase()
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
