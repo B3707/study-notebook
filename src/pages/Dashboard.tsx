@@ -91,6 +91,9 @@ export default function Dashboard() {
   const removeTask = useMutation(api.tasks.remove);
   const createSession = useMutation(api.studySessions.create);
   const removeSession = useMutation(api.studySessions.remove);
+  const getImageUrlDirect = useMutation(api.profile.getImageUrlDirect);
+
+  const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
@@ -126,7 +129,17 @@ export default function Dashboard() {
     ? Math.max(0, focusSeconds - timerSeconds)
     : Math.max(0, breakSeconds - timerSeconds);
 
-
+  // Fetch profile picture URL for the header avatar
+  useEffect(() => {
+    const storageId = (user as any)?.profilePicture;
+    if (storageId) {
+      getImageUrlDirect({ storageId })
+        .then((url) => setHeaderImageUrl(url))
+        .catch(() => setHeaderImageUrl(null));
+    } else {
+      setHeaderImageUrl(null);
+    }
+  }, [user]);
 
   const today = new Date().toISOString().split("T")[0];
   const activeTasks = tasks?.filter((t) => !t.completed) ?? [];
@@ -296,8 +309,12 @@ export default function Dashboard() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group">
-                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
-                    {((user as any)?.displayName || user?.name || user?.email || "S")[0].toUpperCase()}
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold overflow-hidden">
+                    {headerImageUrl ? (
+                      <img src={headerImageUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      ((user as any)?.displayName || user?.name || user?.email || "S")[0].toUpperCase()
+                    )}
                   </div>
                   <div className="hidden md:block text-left">
                     <p className="text-sm font-medium text-foreground leading-tight">
