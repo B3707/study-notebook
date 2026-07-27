@@ -35,10 +35,16 @@ export const generateUploadUrl = mutation({
 
 /**
  * Given a Convex storage ID, return a temporary URL to view the file.
+ * Returns null if the storage ID is empty, undefined, or invalid.
  */
 export const getImageUrl = query({
-  args: { storageId: v.id("_storage") },
+  args: { storageId: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    return await ctx.storage.getUrl(args.storageId);
+    if (!args.storageId) return null;
+    try {
+      return await ctx.storage.getUrl(args.storageId as any);
+    } catch {
+      return null;
+    }
   },
 });

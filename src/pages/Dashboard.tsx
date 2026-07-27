@@ -127,10 +127,10 @@ export default function Dashboard() {
     ? Math.max(0, focusSeconds - timerSeconds)
     : Math.max(0, breakSeconds - timerSeconds);
 
-  const profilePictureStorageId = (user as any)?.profilePicture as string | undefined;
+  const profilePictureStorageId = (user as any)?.profilePicture;
   const profilePictureUrl = useQuery(
     api.profile.getImageUrl,
-    profilePictureStorageId ? { storageId: profilePictureStorageId as any } : "skip"
+    { storageId: profilePictureStorageId || undefined }
   );
 
   const today = new Date().toISOString().split("T")[0];

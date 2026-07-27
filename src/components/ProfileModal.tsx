@@ -25,10 +25,10 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
   const updateProfile = useMutation(api.profile.update);
   const generateUploadUrl = useMutation(api.profile.generateUploadUrl);
 
-  const profilePictureStorageId = (user as any)?.profilePicture as string | undefined;
+  const profilePictureStorageId = (user as any)?.profilePicture;
   const profilePictureUrl = useQuery(
     api.profile.getImageUrl,
-    profilePictureStorageId ? { storageId: profilePictureStorageId as any } : "skip"
+    { storageId: profilePictureStorageId || undefined }
   );
 
   const [displayName, setDisplayName] = useState("");
