@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
@@ -127,11 +126,7 @@ export default function Dashboard() {
     ? Math.max(0, focusSeconds - timerSeconds)
     : Math.max(0, breakSeconds - timerSeconds);
 
-  const profilePictureStorageId = (user as any)?.profilePicture;
-  const profilePictureUrl = useQuery(
-    api.profile.getImageUrl,
-    { storageId: profilePictureStorageId || undefined }
-  );
+
 
   const today = new Date().toISOString().split("T")[0];
   const activeTasks = tasks?.filter((t) => !t.completed) ?? [];
@@ -301,16 +296,9 @@ export default function Dashboard() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors group">
-                  <Avatar className="w-7 h-7 ring-1 ring-border/20">
-                    <AvatarImage
-                      src={profilePictureUrl || undefined}
-                      alt="Profile"
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs font-serif font-bold">
-                      {((user as any)?.displayName || user?.name || user?.email || "S")[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-serif font-bold">
+                    {((user as any)?.displayName || user?.name || user?.email || "S")[0].toUpperCase()}
+                  </div>
                   <div className="hidden md:block text-left">
                     <p className="text-sm font-medium text-foreground leading-tight">
                       {(user as any)?.displayName || user?.name || user?.email || "Student"}
