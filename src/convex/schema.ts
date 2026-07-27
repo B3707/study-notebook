@@ -31,6 +31,7 @@ const schema = defineSchema(
 
       displayName: v.optional(v.string()), // display name for profile
       bio: v.optional(v.string()), // short bio for profile
+      profilePicture: v.optional(v.string()), // Convex storage ID for profile picture
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
