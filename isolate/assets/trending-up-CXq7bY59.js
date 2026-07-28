@@ -1,1 +1,0 @@
-import{c as e}from"./index-Dqp6P93D.js";const a=[["path",{d:"M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344",key:"2acyp4"}],["path",{d:"m9 11 3 3L22 4",key:"1pflzl"}]],t=e("square-check-big",a);const c=[["path",{d:"M16 7h6v6",key:"box55l"}],["path",{d:"m22 7-8.5 8.5-5-5L2 17",key:"1t1m79"}]],n=e("trending-up",c);export{t as S,n as T};
