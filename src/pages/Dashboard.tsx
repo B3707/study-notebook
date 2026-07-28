@@ -120,6 +120,7 @@ export default function Dashboard() {
   const [timerSubject, setTimerSubject] = useState("");
   const [timerNotes, setTimerNotes] = useState("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerStartTimeRef = useRef<number | null>(null);
 
   // Pomodoro state
   const [pomodoroPhase, setPomodoroPhase] = useState<"focus" | "break">("focus");
@@ -156,19 +157,47 @@ export default function Dashboard() {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Timer logic
+  // Timer logic — uses wall-clock time so it's accurate even when tab is backgrounded
   useEffect(() => {
     if (timerRunning) {
-      intervalRef.current = setInterval(() => {
-        setTimerSeconds((s) => s + 1);
-      }, 1000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      // If we don't have a start time yet (first run), set it now
+      if (timerStartTimeRef.current === null) {
+        timerStartTimeRef.current = Date.now();
+      } else {
+        // Resume: adjust start time so elapsed = current seconds
+        timerStartTimeRef.current = Date.now() - timerSeconds * 1000;
+      }
+
+      // Tick every 500ms for smoother catch-up
+      const tick = () => {
+        const elapsed = Math.floor((Date.now() - timerStartTimeRef.current!) / 1000);
+        setTimerSeconds(elapsed);
+      };
+
+      tick(); // immediate sync
+      intervalRef.current = setInterval(tick, 500);
+    } else {
+      timerStartTimeRef.current = null;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
+  }, [timerRunning]);
+
+  // Fix for tab visibility — recalc elapsed time when user returns
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && timerRunning && timerStartTimeRef.current !== null) {
+        const elapsed = Math.floor((Date.now() - timerStartTimeRef.current) / 1000);
+        setTimerSeconds(elapsed);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [timerRunning]);
 
   // Pomodoro phase completion detection & notification (single effect)
@@ -224,6 +253,10 @@ export default function Dashboard() {
     if (!timerSubject) return;
     if (timerMode === "pomodoro") {
       setTimerSeconds(0);
+      timerStartTimeRef.current = null; // reset so new session starts fresh
+    } else {
+      // For free mode, we want cumulative — keep timerStartTimeRef null so the effect sets it
+      timerStartTimeRef.current = null;
     }
     setTimerRunning(true);
   };
@@ -248,6 +281,7 @@ export default function Dashboard() {
   const handleResetTimer = () => {
     setTimerRunning(false);
     setTimerSeconds(0);
+    timerStartTimeRef.current = null;
     setPomodoroPhase("focus");
     if (timerMode === "pomodoro") {
       setPomodoroCount(0);
