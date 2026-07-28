@@ -19,7 +19,6 @@ import {
   Moon,
   Eye,
   Sparkles,
-  Monitor,
 } from "lucide-react";
 
 interface ThemeModalProps {

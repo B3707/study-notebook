@@ -88,12 +88,16 @@ const HEADING_FONT_OPTIONS = [
 ];
 
 function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem("clockocus-theme") as Theme | null;
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  try {
+    if (typeof window === "undefined") return "light";
+    const stored = localStorage.getItem("clockocus-theme") as Theme | null;
+    if (stored === "light" || stored === "dark") return stored;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  } catch {
+    return "light";
+  }
 }
 
 function getStoredSettings(): ThemeSettings {
@@ -107,90 +111,104 @@ function getStoredSettings(): ThemeSettings {
 }
 
 function applyThemeToDom(theme: Theme, settings: ThemeSettings, customCss: string) {
-  const root = document.documentElement;
+  try {
+    const root = document.documentElement;
 
-  // Apply dark/light class
-  if (theme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
+    // Apply dark/light class
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+
+    const s = settings;
+
+    // Apply light mode variables
+    root.style.setProperty("--background", s.light.background);
+    root.style.setProperty("--foreground", s.light.foreground);
+    root.style.setProperty("--primary", s.light.primary);
+    root.style.setProperty("--primary-foreground", s.light.primaryForeground);
+    root.style.setProperty("--secondary", s.light.secondary);
+    root.style.setProperty("--secondary-foreground", s.light.secondaryForeground);
+    root.style.setProperty("--accent", s.light.accent);
+    root.style.setProperty("--accent-foreground", s.light.accentForeground);
+    root.style.setProperty("--muted", s.light.muted);
+    root.style.setProperty("--muted-foreground", s.light.mutedForeground);
+    root.style.setProperty("--border", s.light.border);
+    root.style.setProperty("--card", s.light.background);
+    root.style.setProperty("--card-foreground", s.light.foreground);
+    root.style.setProperty("--popover", s.light.background);
+    root.style.setProperty("--popover-foreground", s.light.foreground);
+    root.style.setProperty("--input", s.light.border);
+    root.style.setProperty("--ring", s.light.primary);
+
+    // Apply dark mode variables via style element
+    let darkStyles = document.getElementById("clockocus-dark-styles");
+    if (!darkStyles) {
+      darkStyles = document.createElement("style");
+      darkStyles.id = "clockocus-dark-styles";
+      document.head.appendChild(darkStyles);
+    }
+    if (darkStyles) {
+      darkStyles.textContent = `.dark {\n` +
+        `  --background: ${s.dark.background};\n` +
+        `  --foreground: ${s.dark.foreground};\n` +
+        `  --primary: ${s.dark.primary};\n` +
+        `  --primary-foreground: ${s.dark.primaryForeground};\n` +
+        `  --secondary: ${s.dark.secondary};\n` +
+        `  --secondary-foreground: ${s.dark.secondaryForeground};\n` +
+        `  --accent: ${s.dark.accent};\n` +
+        `  --accent-foreground: ${s.dark.accentForeground};\n` +
+        `  --muted: ${s.dark.muted};\n` +
+        `  --muted-foreground: ${s.dark.mutedForeground};\n` +
+        `  --border: ${s.dark.border};\n` +
+        `  --card: ${s.dark.background};\n` +
+        `  --card-foreground: ${s.dark.foreground};\n` +
+        `  --popover: ${s.dark.background};\n` +
+        `  --popover-foreground: ${s.dark.foreground};\n` +
+        `  --input: ${s.dark.border};\n` +
+        `  --ring: ${s.dark.primary};\n` +
+        `}\n`;
+    }
+
+    // Apply fonts
+    let fontStyles = document.getElementById("clockocus-font-styles");
+    if (!fontStyles) {
+      fontStyles = document.createElement("style");
+      fontStyles.id = "clockocus-font-styles";
+      document.head.appendChild(fontStyles);
+    }
+    if (fontStyles) {
+      const bodyFont = s.light.fontFamily;
+      const headingFont = s.light.headingFont || bodyFont;
+      fontStyles.textContent = `
+        body, .font-body { font-family: ${bodyFont}; }
+        h1, h2, h3, h4, h5, h6, .font-serif, .font-heading { font-family: ${headingFont}; }
+        .handwriting { font-family: ${bodyFont}; font-style: italic; }
+      `;
+    }
+
+    // Custom CSS
+    let customStyle = document.getElementById("clockocus-custom-css");
+    if (!customStyle) {
+      customStyle = document.createElement("style");
+      customStyle.id = "clockocus-custom-css";
+      document.head.appendChild(customStyle);
+    }
+    if (customStyle) {
+      customStyle.textContent = customCss;
+    }
+
+    // Save to localStorage
+    try {
+      localStorage.setItem("clockocus-theme", theme);
+      localStorage.setItem("clockocus-theme-settings", JSON.stringify(settings));
+    } catch (e) {
+      console.warn("Could not save theme to localStorage:", e);
+    }
+  } catch (e) {
+    console.warn("Could not apply theme to DOM:", e);
   }
-
-  const s = settings;
-
-  // Apply light mode variables
-  root.style.setProperty("--background", s.light.background);
-  root.style.setProperty("--foreground", s.light.foreground);
-  root.style.setProperty("--primary", s.light.primary);
-  root.style.setProperty("--primary-foreground", s.light.primaryForeground);
-  root.style.setProperty("--secondary", s.light.secondary);
-  root.style.setProperty("--secondary-foreground", s.light.secondaryForeground);
-  root.style.setProperty("--accent", s.light.accent);
-  root.style.setProperty("--accent-foreground", s.light.accentForeground);
-  root.style.setProperty("--muted", s.light.muted);
-  root.style.setProperty("--muted-foreground", s.light.mutedForeground);
-  root.style.setProperty("--border", s.light.border);
-  root.style.setProperty("--card", s.light.background);
-  root.style.setProperty("--card-foreground", s.light.foreground);
-  root.style.setProperty("--popover", s.light.background);
-  root.style.setProperty("--popover-foreground", s.light.foreground);
-  root.style.setProperty("--input", s.light.border);
-  root.style.setProperty("--ring", s.light.primary);
-
-  // Apply dark mode variables via style element
-  let darkStyles = document.getElementById("clockocus-dark-styles");
-  if (!darkStyles) {
-    darkStyles = document.createElement("style");
-    darkStyles.id = "clockocus-dark-styles";
-    document.head.appendChild(darkStyles);
-  }
-  darkStyles.textContent = `.dark {\n` +
-    `  --background: ${s.dark.background};\n` +
-    `  --foreground: ${s.dark.foreground};\n` +
-    `  --primary: ${s.dark.primary};\n` +
-    `  --primary-foreground: ${s.dark.primaryForeground};\n` +
-    `  --secondary: ${s.dark.secondary};\n` +
-    `  --secondary-foreground: ${s.dark.secondaryForeground};\n` +
-    `  --accent: ${s.dark.accent};\n` +
-    `  --accent-foreground: ${s.dark.accentForeground};\n` +
-    `  --muted: ${s.dark.muted};\n` +
-    `  --muted-foreground: ${s.dark.mutedForeground};\n` +
-    `  --border: ${s.dark.border};\n` +
-    `  --card: ${s.dark.background};\n` +
-    `  --card-foreground: ${s.dark.foreground};\n` +
-    `  --popover: ${s.dark.background};\n` +
-    `  --popover-foreground: ${s.dark.foreground};\n` +
-    `  --input: ${s.dark.border};\n` +
-    `  --ring: ${s.dark.primary};\n` +
-    `}\n`;
-
-  // Apply fonts
-  let fontStyles = document.getElementById("clockocus-font-styles");
-  if (!fontStyles) {
-    fontStyles = document.createElement("style");
-    fontStyles.id = "clockocus-font-styles";
-    document.head.appendChild(fontStyles);
-  }
-  const bodyFont = s.light.fontFamily;
-  const headingFont = s.light.headingFont || bodyFont;
-  fontStyles.textContent = `
-    body, .font-body { font-family: ${bodyFont}; }
-    h1, h2, h3, h4, h5, h6, .font-serif, .font-heading { font-family: ${headingFont}; }
-    .handwriting { font-family: ${bodyFont}; font-style: italic; }
-  `;
-
-  // Custom CSS
-  let customStyle = document.getElementById("clockocus-custom-css");
-  if (!customStyle) {
-    customStyle = document.createElement("style");
-    customStyle.id = "clockocus-custom-css";
-    document.head.appendChild(customStyle);
-  }
-  customStyle.textContent = customCss;
-
-  // Save to localStorage
-  localStorage.setItem("clockocus-theme", theme);
-  localStorage.setItem("clockocus-theme-settings", JSON.stringify(settings));
 }
 
 interface ThemeContextValue {
