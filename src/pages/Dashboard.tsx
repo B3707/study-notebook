@@ -19,6 +19,7 @@ import {
 import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "convex/react";
+import { toPng } from "html-to-image";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -45,10 +46,14 @@ import {
   Trophy,
   LogOut,
   FileImage,
+  BarChart3,
+  Camera,
+  Loader2,
+  Download,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
-type Tab = "overview" | "subjects" | "tasks" | "timer";
+type Tab = "overview" | "subjects" | "tasks" | "timer" | "stats";
 
 const priorityColors: Record<Priority, string> = {
   low: "bg-chart-4/20 text-chart-4 border-chart-4/30",
@@ -297,6 +302,7 @@ export default function Dashboard() {
     { key: "subjects", label: "Subjects", icon: BookOpen },
     { key: "tasks", label: "Tasks", icon: CheckSquare },
     { key: "timer", label: "Timer", icon: Timer },
+    { key: "stats", label: "Stats", icon: BarChart3 },
   ];
 
   return (
@@ -422,7 +428,7 @@ export default function Dashboard() {
               {/* ==================== OVERVIEW TAB ==================== */}
               {activeTab === "overview" && (
                 <div className="space-y-6">
-                  {/* Stats Cards */}
+                  {/* Quick Stats Row */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="notebook-card rounded-lg p-5">
                       <div className="flex items-center gap-3 mb-3">
@@ -431,15 +437,15 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                            Total Study Time
+                            Today's Study Time
                           </p>
                         </div>
                       </div>
                       <p className="text-3xl font-serif font-bold text-foreground">
-                        {formatTime(totalStudyMinutes)}
+                        {formatTime(todaySessions?.reduce((s, sess) => s + sess.duration, 0) ?? 0)}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        across {sessionCount} session{sessionCount !== 1 ? "s" : ""}
+                        {todaySessions?.length ?? 0} session{(todaySessions?.length ?? 0) !== 1 ? "s" : ""} today
                       </p>
                     </div>
 
@@ -558,47 +564,18 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* Subject Time Breakdown */}
-                  {stats && stats.sessionsBySubject.length > 0 && (
-                    <div className="notebook-card rounded-lg p-5">
-                      <h3 className="font-serif font-semibold text-foreground mb-4 flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-accent" />
-                        Study Time by Subject
-                      </h3>
-                      <div className="space-y-3">
-                        {stats.sessionsBySubject.map((item) => (
-                          <div key={item.subjectName}>
-                            <div className="flex items-center justify-between text-sm mb-1">
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="w-2.5 h-2.5 rounded-full"
-                                  style={{ backgroundColor: item.subjectColor }}
-                                />
-                                <span className="text-foreground">{item.subjectName}</span>
-                              </div>
-                              <span className="text-muted-foreground font-mono text-xs">
-                                {formatTime(item.minutes)}
-                              </span>
-                            </div>
-                            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{
-                                  width: `${(item.minutes / totalStudyMinutes) * 100}%`,
-                                }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="h-full rounded-full"
-                                style={{ backgroundColor: item.subjectColor }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Share Your Progress */}
-                  <ShareStats />
+                  {/* Quick link to Stats tab */}
+                  <div className="text-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveTab("stats")}
+                      className="text-xs text-muted-foreground hover:text-foreground gap-2"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                      View detailed stats
+                    </Button>
+                  </div>
                 </div>
               )}
 
@@ -980,6 +957,120 @@ export default function Dashboard() {
                 </div>
               )}
 
+              {/* ==================== STATS TAB ==================== */}
+              {activeTab === "stats" && (
+                <div className="space-y-6">
+                  {/* Today's Progress - Downloadable Card */}
+                  <TodayStatsCard
+                    todaySessions={todaySessions}
+                    subjects={subjects}
+                    user={user}
+                  />
+
+                  {/* Overall Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="notebook-card rounded-lg p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                          <Clock className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                            Total Study Time
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-serif font-bold text-foreground">
+                        {formatTime(totalStudyMinutes)}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        across {sessionCount} session{sessionCount !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+
+                    <div className="notebook-card rounded-lg p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                          <Target className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                            Total Sessions
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-serif font-bold text-foreground">
+                        {sessionCount}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        all time
+                      </p>
+                    </div>
+
+                    <div className="notebook-card rounded-lg p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                          <BookOpen className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                            Subjects
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-serif font-bold text-foreground">
+                        {subjects?.length ?? 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        courses being tracked
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Subject Time Breakdown */}
+                  {stats && stats.sessionsBySubject.length > 0 && (
+                    <div className="notebook-card rounded-lg p-5">
+                      <h3 className="font-serif font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-accent" />
+                        Study Time by Subject
+                      </h3>
+                      <div className="space-y-3">
+                        {stats.sessionsBySubject.map((item) => (
+                          <div key={item.subjectName}>
+                            <div className="flex items-center justify-between text-sm mb-1">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="w-2.5 h-2.5 rounded-full"
+                                  style={{ backgroundColor: item.subjectColor }}
+                                />
+                                <span className="text-foreground">{item.subjectName}</span>
+                              </div>
+                              <span className="text-muted-foreground font-mono text-xs">
+                                {formatTime(item.minutes)}
+                              </span>
+                            </div>
+                            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{
+                                  width: `${(item.minutes / totalStudyMinutes) * 100}%`,
+                                }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="h-full rounded-full"
+                                style={{ backgroundColor: item.subjectColor }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Share Stats Component */}
+                  <ShareStats />
+                </div>
+              )}
+
               {/* ==================== TIMER TAB ==================== */}
               {activeTab === "timer" && (
                 <div className="space-y-6">
@@ -1278,6 +1369,195 @@ export default function Dashboard() {
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <AchievementsModal open={showAchievements} onOpenChange={setShowAchievements} />
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
+    </div>
+  );
+}
+
+// ===== TodayStatsCard Component =====
+interface TodayStatsCardProps {
+  todaySessions: { duration: number; subjectName: string; subjectColor: string }[] | undefined;
+  subjects: { length: number } | undefined | null;
+  user: unknown;
+}
+
+function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const todayMinutes = todaySessions?.reduce((s, sess) => s + sess.duration, 0) ?? 0;
+  const sessionCount = todaySessions?.length ?? 0;
+  const subjectCount = subjects?.length ?? 0;
+  const displayName = (user as any)?.displayName || (user as any)?.name || (user as any)?.email || "Student";
+
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+    setIsDownloading(true);
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: "#FAF6F0",
+        cacheBust: true,
+      });
+      const link = document.createElement("a");
+      link.download = "today-study-" + new Date().toISOString().split("T")[0] + ".png";
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error("Failed to download today's stats image:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <div className="notebook-card rounded-lg overflow-hidden">
+      <div className="p-5 pb-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-serif font-semibold text-foreground flex items-center gap-2">
+            <Camera className="h-4 w-4 text-accent" />
+            Today's Study Photo
+          </h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDownload}
+            disabled={isDownloading || todayMinutes === 0}
+            className="h-8 px-2.5 text-xs gap-1.5"
+            title="Download today's stats as PNG"
+          >
+            {isDownloading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="h-3.5 w-3.5" />
+            )}
+            Download Photo
+          </Button>
+        </div>
+      </div>
+
+      <div className="px-5 pb-5 flex justify-center">
+        {/* Today's Stats Card */}
+        <div
+          ref={cardRef}
+          className="flex-shrink-0 flex flex-col overflow-hidden"
+          style={{
+            width: 400,
+            borderRadius: 16,
+            background: "linear-gradient(145deg, #FAF6F0 0%, #F5EDE0 50%, #F0E8D8 100%)",
+            boxShadow: "0 0 0 1px rgba(183, 28, 28, 0.08), 0 4px 12px rgba(0,0,0,0.04)",
+            position: "relative",
+          }}
+        >
+          {/* Accent bar */}
+          <div style={{
+            height: 4, width: "100%",
+            background: "linear-gradient(90deg, #B71C1C, #D32F2F, #E53935)",
+            flexShrink: 0,
+          }} />
+
+          {/* Header */}
+          <div className="px-8 pt-6 pb-2 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8,
+                  background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#FAF6F0", fontSize: 12, fontWeight: "bold",
+                  fontFamily: "Georgia, serif", flexShrink: 0,
+                }}>SN</div>
+                <div>
+                  <p style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
+                    Study Notebook
+                  </p>
+                </div>
+              </div>
+              <span style={{ fontSize: 7, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.35)" }}>
+                {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+              </span>
+            </div>
+          </div>
+
+          <div className="mx-8" style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(183, 28, 28, 0.12), transparent)" }} />
+
+          {/* Main Content */}
+          <div className="px-8 py-6 flex-1 flex flex-col">
+            {/* Greeting */}
+            <p style={{ fontSize: 9, color: "#8B7355", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500, margin: 0 }}>
+              Today's Study Progress
+            </p>
+            <h2 style={{ fontSize: 20, fontWeight: 700, fontFamily: "Georgia, 'Palatino Linotype', serif", color: "#2C1810", margin: "4px 0 16px", letterSpacing: "-0.01em" }}>
+              {displayName}
+            </h2>
+
+            {/* Hero Time */}
+            <div className="text-center">
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "4px 14px", borderRadius: 16,
+                background: "rgba(183, 28, 28, 0.07)", marginBottom: 12,
+              }}>
+                <Clock size={10} style={{ color: "#B71C1C" }} />
+                <span style={{ fontSize: 8, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#B71C1C" }}>
+                  Studied Today
+                </span>
+              </div>
+              <p style={{
+                fontSize: 42, fontWeight: 700,
+                fontFamily: "Georgia, 'Palatino Linotype', serif",
+                color: "#2C1810", margin: 0, lineHeight: 1, letterSpacing: "-0.02em",
+              }}>
+                {todayMinutes >= 60
+                  ? Math.floor(todayMinutes / 60) + "h " + (todayMinutes % 60) + "m"
+                  : todayMinutes + "m"}
+              </p>
+              <p style={{ fontSize: 11, color: "#8B7355", margin: "6px 0 0", fontStyle: "italic", fontFamily: "Georgia, serif" }}>
+                {sessionCount} session{sessionCount !== 1 ? "s" : ""} — {subjectCount} subject{subjectCount !== 1 ? "s" : ""}
+              </p>
+            </div>
+
+            {/* Today's Sessions List */}
+            {todaySessions && todaySessions.length > 0 && (
+              <div style={{ marginTop: 20 }}>
+                <p style={{ fontSize: 7, letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: "#8B7355", marginBottom: 8, textAlign: "center" }}>
+                  Sessions
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                  {todaySessions.slice(0, 5).map((session, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: session.subjectColor, flexShrink: 0 }} />
+                      <span style={{ fontSize: 9, color: "#2C1810", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {session.subjectName}
+                      </span>
+                      <span style={{ fontSize: 8, fontFamily: "monospace", color: "#8B7355", flexShrink: 0 }}>
+                        {session.duration >= 60
+                          ? Math.floor(session.duration / 60) + "h " + (session.duration % 60) + "m"
+                          : session.duration + "m"}
+                      </span>
+                    </div>
+                  ))}
+                  {todaySessions.length > 5 && (
+                    <p style={{ fontSize: 7, textAlign: "center", fontStyle: "italic", color: "#8B7355", margin: "2px 0 0" }}>
+                      + {todaySessions.length - 5} more
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-8 py-3 flex-shrink-0 flex items-center justify-between" style={{ borderTop: "1px solid rgba(183, 28, 28, 0.1)" }}>
+            <span style={{ fontSize: 7, fontFamily: "Georgia, serif", fontStyle: "italic", color: "#8B7355" }}>
+              &copy; Study Notebook
+            </span>
+            <span style={{ fontSize: 7, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
+              studynotebook.app
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
