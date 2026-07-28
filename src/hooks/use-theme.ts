@@ -4,7 +4,7 @@ type Theme = "light" | "dark";
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem("notebook-theme") as Theme | null;
+  const stored = localStorage.getItem("clockocus-theme") as Theme | null;
   if (stored === "light" || stored === "dark") return stored;
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
@@ -21,7 +21,7 @@ export function useTheme() {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("notebook-theme", theme);
+    localStorage.setItem("clockocus-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {

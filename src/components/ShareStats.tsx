@@ -48,12 +48,12 @@ export function ShareStats() {
   const dims = DIMS[ratio];
 
   const shareText =
-    "Study Notebook Report\n\n" +
+    "Clockocus Report\n\n" +
     displayName + "\n" +
     "Total Time: " + formatTime(totalMinutes) + "\n" +
     "Sessions: " + sessionCount + "\n" +
     "Subjects: " + subjectCount + "\n\n" +
-    "studynotebook.freebuff.app";
+    "clockocus.app";
 
   const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
@@ -68,7 +68,7 @@ export function ShareStats() {
         cacheBust: true,
       });
       const link = document.createElement("a");
-      link.download = "study-progress-" + new Date().toISOString().split("T")[0] + "-" + ratio.replace(":", "x") + ".png";
+      link.download = "clockocus-progress-" + new Date().toISOString().split("T")[0] + "-" + ratio.replace(":", "x") + ".png";
       link.href = dataUrl;
       link.click();
     } catch (error) {
@@ -223,13 +223,13 @@ export function ShareStats() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     color: "#FAF6F0", fontSize: 13, fontWeight: "bold",
                     fontFamily: "Georgia, serif", flexShrink: 0,
-                  }}>SN</div>
+                  }}>Cl</div>
                   <div>
                     <p style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
-                      Study Notebook
+                      Clockocus
                     </p>
                     <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
-                      studynotebook.freebuff.app
+                      clockocus.app
                     </p>
                   </div>
                 </div>
@@ -377,13 +377,13 @@ export function ShareStats() {
                       display: "flex", alignItems: "center", justifyContent: "center",
                       color: "#FAF6F0", fontSize: 11, fontWeight: "bold",
                       fontFamily: "Georgia, serif", flexShrink: 0,
-                    }}>SN</div>
+                    }}>Cl</div>
                     <div>
                       <p style={{ fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
-                        Study Notebook
+                        Clockocus
                       </p>
                       <p style={{ fontSize: 6, color: "rgba(183, 28, 28, 0.35)", margin: "1px 0 0", letterSpacing: "0.08em" }}>
-                        studynotebook.freebuff.app
+                        clockocus.app
                       </p>
                     </div>
                   </div>
@@ -490,10 +490,9 @@ export function ShareStats() {
               </div>
 
               {/* Compact Footer */}
-              <div className="px-8 py-3 flex-shrink-0 flex items-center justify-between" style={{ borderTop: "1px solid rgba(183, 28, 28, 0.1)" }}>
-                <span style={{ fontSize: 7, fontFamily: "Georgia, serif", fontStyle: "italic", color: "#8B7355" }}>
-                  &copy; Study Notebook
-                </span>
+              <div className="px-8 py-3 flex-shrink-0 flex items-center justify-between" style={{ borderTop: "1px solid rgba(183, 28, 28, 0.1)" }}>                  <span style={{ fontSize: 7, fontFamily: "Georgia, serif", fontStyle: "italic", color: "#8B7355" }}>
+                    &copy; Clockocus
+                  </span>
                 <span style={{ fontSize: 7, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
                   {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>

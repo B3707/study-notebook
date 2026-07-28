@@ -55,9 +55,9 @@ export default function Landing() {
       <header className="border-b border-border/60 bg-card/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Study Notebook Logo" className="w-9 h-9 rounded-lg shadow-sm object-cover" />
+            <img src="/logo.png" alt="Clockocus Logo" className="w-9 h-9 rounded-lg shadow-sm object-cover" />
             <span className="text-lg font-serif tracking-tight text-foreground">
-              Study Notebook
+              Clockocus
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -233,7 +233,7 @@ export default function Landing() {
               Ready to begin?
             </span>
             <h2 className="text-3xl md:text-4xl font-serif font-bold mt-3 text-foreground">
-              Start Your Study Notebook Today
+              Start Your Clockocus Today
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
               Join students who track their progress, stay organized, and achieve more
@@ -261,7 +261,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Logo" className="w-4 h-4 rounded object-cover" />
-            <span className="font-serif">Study Notebook</span>
+            <span className="font-serif">Clockocus</span>
           </div>
           <p className="handwriting text-xs">— keep learning —</p>
         </div>
