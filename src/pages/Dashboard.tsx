@@ -1383,11 +1383,24 @@ interface TodayStatsCardProps {
 function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState<"9:16" | "4:5">("4:5");
 
   const todayMinutes = todaySessions?.reduce((s, sess) => s + sess.duration, 0) ?? 0;
   const sessionCount = todaySessions?.length ?? 0;
   const subjectCount = subjects?.length ?? 0;
   const displayName = (user as any)?.displayName || (user as any)?.name || (user as any)?.email || "Student";
+
+  // Card dimensions based on aspect ratio
+  const cardWidth = aspectRatio === "9:16" ? 360 : 400;
+  const cardHeight = aspectRatio === "9:16" ? Math.round(360 * 16 / 9) : Math.round(400 * 5 / 4);
+
+  // Styling adjustments per ratio
+  const isTall = aspectRatio === "9:16";
+  const heroFontSize = isTall ? 54 : 42;
+  const nameFontSize = isTall ? 24 : 20;
+  const headerPadding = isTall ? "px-8 pt-6 pb-4" : "px-8 pt-6 pb-2";
+  const contentPadding = isTall ? "px-8 py-8" : "px-8 py-6";
+  const sessionLimit = isTall ? 10 : 5;
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -1400,7 +1413,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
         cacheBust: true,
       });
       const link = document.createElement("a");
-      link.download = "today-study-" + new Date().toISOString().split("T")[0] + ".png";
+      link.download = `today-study-${new Date().toISOString().split("T")[0]}-${aspectRatio.replace(":", "x")}.png`;
       link.href = dataUrl;
       link.click();
     } catch (error) {
@@ -1412,7 +1425,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
 
   return (
     <div className="notebook-card rounded-lg overflow-hidden">
-      <div className="p-5 pb-3">
+      <div className="p-5 pb-3 space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-serif font-semibold text-foreground flex items-center gap-2">
             <Camera className="h-4 w-4 text-accent" />
@@ -1434,6 +1447,37 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
             Download Photo
           </Button>
         </div>
+
+        {/* Aspect Ratio Selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+            Aspect Ratio:
+          </span>
+          <div className="flex gap-1">
+            {(["4:5", "9:16"] as const).map((ratio) => (
+              <button
+                key={ratio}
+                onClick={() => setAspectRatio(ratio)}
+                className={`px-2.5 py-1 text-[10px] font-medium rounded-md transition-all ${
+                  aspectRatio === ratio
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`rounded-sm ${ratio === "4:5" ? "w-2.5 h-3" : "w-2 h-3.5"}`}
+                    style={{
+                      backgroundColor: aspectRatio === ratio ? "currentColor" : undefined,
+                      border: aspectRatio === ratio ? "none" : "1px solid currentColor",
+                    }}
+                  />
+                  {ratio}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="px-5 pb-5 flex justify-center">
@@ -1442,7 +1486,8 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
           ref={cardRef}
           className="flex-shrink-0 flex flex-col overflow-hidden"
           style={{
-            width: 400,
+            width: cardWidth,
+            height: cardHeight,
             borderRadius: 16,
             background: "linear-gradient(145deg, #FAF6F0 0%, #F5EDE0 50%, #F0E8D8 100%)",
             boxShadow: "0 0 0 1px rgba(183, 28, 28, 0.08), 0 4px 12px rgba(0,0,0,0.04)",
@@ -1457,7 +1502,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
           }} />
 
           {/* Header */}
-          <div className="px-8 pt-6 pb-2 flex-shrink-0">
+          <div className={`${headerPadding} flex-shrink-0`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div style={{
@@ -1482,12 +1527,17 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
           <div className="mx-8" style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(183, 28, 28, 0.12), transparent)" }} />
 
           {/* Main Content */}
-          <div className="px-8 py-6 flex-1 flex flex-col">
+          <div className={`${contentPadding} flex-1 flex flex-col justify-center`}>
             {/* Greeting */}
-            <p style={{ fontSize: 9, color: "#8B7355", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500, margin: 0 }}>
+            <p style={{ fontSize: 9, color: "#8B7355", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500, margin: 0, textAlign: "center" }}>
               Today's Study Progress
             </p>
-            <h2 style={{ fontSize: 20, fontWeight: 700, fontFamily: "Georgia, 'Palatino Linotype', serif", color: "#2C1810", margin: "4px 0 16px", letterSpacing: "-0.01em" }}>
+            <h2 style={{
+              fontSize: nameFontSize, fontWeight: 700,
+              fontFamily: "Georgia, 'Palatino Linotype', serif",
+              color: "#2C1810", margin: "6px 0 20px", letterSpacing: "-0.01em",
+              textAlign: "center",
+            }}>
               {displayName}
             </h2>
 
@@ -1504,7 +1554,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
                 </span>
               </div>
               <p style={{
-                fontSize: 42, fontWeight: 700,
+                fontSize: heroFontSize, fontWeight: 700,
                 fontFamily: "Georgia, 'Palatino Linotype', serif",
                 color: "#2C1810", margin: 0, lineHeight: 1, letterSpacing: "-0.02em",
               }}>
@@ -1512,34 +1562,34 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
                   ? Math.floor(todayMinutes / 60) + "h " + (todayMinutes % 60) + "m"
                   : todayMinutes + "m"}
               </p>
-              <p style={{ fontSize: 11, color: "#8B7355", margin: "6px 0 0", fontStyle: "italic", fontFamily: "Georgia, serif" }}>
+              <p style={{ fontSize: 11, color: "#8B7355", margin: "8px 0 0", fontStyle: "italic", fontFamily: "Georgia, serif" }}>
                 {sessionCount} session{sessionCount !== 1 ? "s" : ""} — {subjectCount} subject{subjectCount !== 1 ? "s" : ""}
               </p>
             </div>
 
             {/* Today's Sessions List */}
             {todaySessions && todaySessions.length > 0 && (
-              <div style={{ marginTop: 20 }}>
+              <div style={{ marginTop: isTall ? 28 : 20, marginBottom: isTall ? 8 : 0 }}>
                 <p style={{ fontSize: 7, letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: "#8B7355", marginBottom: 8, textAlign: "center" }}>
                   Sessions
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                  {todaySessions.slice(0, 5).map((session, i) => (
+                <div style={{ display: "flex", flexDirection: "column", gap: isTall ? 8 : 5 }}>
+                  {todaySessions.slice(0, sessionLimit).map((session, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: session.subjectColor, flexShrink: 0 }} />
-                      <span style={{ fontSize: 9, color: "#2C1810", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <span style={{ fontSize: isTall ? 10 : 9, color: "#2C1810", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {session.subjectName}
                       </span>
-                      <span style={{ fontSize: 8, fontFamily: "monospace", color: "#8B7355", flexShrink: 0 }}>
+                      <span style={{ fontSize: isTall ? 9 : 8, fontFamily: "monospace", color: "#8B7355", flexShrink: 0 }}>
                         {session.duration >= 60
                           ? Math.floor(session.duration / 60) + "h " + (session.duration % 60) + "m"
                           : session.duration + "m"}
                       </span>
                     </div>
                   ))}
-                  {todaySessions.length > 5 && (
-                    <p style={{ fontSize: 7, textAlign: "center", fontStyle: "italic", color: "#8B7355", margin: "2px 0 0" }}>
-                      + {todaySessions.length - 5} more
+                  {todaySessions.length > sessionLimit && (
+                    <p style={{ fontSize: 7, textAlign: "center", fontStyle: "italic", color: "#8B7355", margin: "4px 0 0" }}>
+                      + {todaySessions.length - sessionLimit} more
                     </p>
                   )}
                 </div>
