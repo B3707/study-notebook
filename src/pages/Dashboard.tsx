@@ -185,7 +185,7 @@ export default function Dashboard() {
       tick(); // immediate sync
       intervalRef.current = setInterval(tick, 500);
     } else {
-      timerStartTimeRef.current = null;
+      // Pause: keep timerStartTimeRef so we can resume from where we left off
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -260,12 +260,13 @@ export default function Dashboard() {
   const handleStartTimer = () => {
     if (!timerSubject) return;
     if (timerMode === "pomodoro") {
+      // Always start pomodoro from zero (new session or resume from pause reset)
       setTimerSeconds(0);
-      timerStartTimeRef.current = null; // reset so new session starts fresh
-    } else {
-      // For free mode, we want cumulative — keep timerStartTimeRef null so the effect sets it
       timerStartTimeRef.current = null;
     }
+    // For free mode: timerStartTimeRef already has the start time from initial run
+    // On first start, it's null → effect will set it to Date.now()
+    // On resume from pause, it has the old value → effect will recalculate from timerSeconds
     setTimerRunning(true);
   };
 
