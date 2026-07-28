@@ -375,7 +375,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-2">
             <a
-              href="https://betadrop.app/install/?i=5Tj9DB"
+              href="https://www.upload-apk.com/dgSJ04Xfvs8QR0V"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-all hover:shadow-md active:scale-95"
