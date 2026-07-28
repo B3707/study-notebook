@@ -243,10 +243,8 @@ export default function SessionShare() {
                       <div style={{
                         width: 34, height: 34, borderRadius: 9,
                         background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        color: "#FAF6F0", fontSize: 13, fontWeight: "bold",
-                        fontFamily: "Georgia, serif", flexShrink: 0,
-                      }}>Cl</div>
+                        flexShrink: 0,
+                      }}><img src="/logo.png" alt="Clockocus" style={{ width: 34, height: 34, borderRadius: 9, objectFit: "cover" }} /></div>
                       <div>
                         <p style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                           Clockocus
@@ -385,10 +383,8 @@ export default function SessionShare() {
                         <div style={{
                           width: 28, height: 28, borderRadius: 7,
                           background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          color: "#FAF6F0", fontSize: 10, fontWeight: "bold",
-                          fontFamily: "Georgia, serif", flexShrink: 0,
-                        }}>Cl</div>
+                          flexShrink: 0,
+                        }}><img src="/logo.png" alt="Clockocus" style={{ width: 28, height: 28, borderRadius: 7, objectFit: "cover" }} /></div>
                         <span style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 500 }}>
                           Clockocus
                         </span>
