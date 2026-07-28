@@ -112,11 +112,11 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-accent" />
+            <img src="/logo.png" alt="Clockocus" className="h-5 w-5 rounded" />
             Your Profile
           </DialogTitle>
           <DialogDescription>
-            Customize how you appear in Study Notebook
+            Customize how you appear in Clockocus
           </DialogDescription>
         </DialogHeader>
 
@@ -134,7 +134,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  (displayName || user?.name || user?.email || "?")[0].toUpperCase()
+                  <img src="/logo.png" alt="Clockocus" className="w-full h-full object-cover" />
                 )}
               </div>
               {/* Overlay on hover */}
@@ -243,7 +243,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  (displayName || user?.name || user?.email || "?")[0].toUpperCase()
+                  <img src="/logo.png" alt="Clockocus" className="w-full h-full object-cover" />
                 )}
               </div>
               <div className="min-w-0">
