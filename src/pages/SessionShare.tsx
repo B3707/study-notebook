@@ -123,7 +123,7 @@ export default function SessionShare() {
           var shareText = "Just completed a study session!\n" +
             session.subjectName + " - " + formatTime(session.duration) +
             (session.notes ? "\n\"" + session.notes + "\"" : "") +
-            "\n\nstudynotebook.freebuff.app";
+            "\n\nclockocus.freebuff.app";
           if (navigator.share) {
             await navigator.share({ title: "My Study Session", text: shareText });
           } else {
@@ -136,7 +136,7 @@ export default function SessionShare() {
         var shareText = "Just completed a study session!\n" +
           session.subjectName + " - " + formatTime(session.duration) +
           (session.notes ? "\n\"" + session.notes + "\"" : "") +
-          "\n\nstudynotebook.freebuff.app";
+          "\n\nclockocus.freebuff.app";
         await navigator.clipboard.writeText(shareText);
         setCopied(true);
         setTimeout(function() { setCopied(false); }, 2000);
@@ -246,13 +246,13 @@ export default function SessionShare() {
                         display: "flex", alignItems: "center", justifyContent: "center",
                         color: "#FAF6F0", fontSize: 13, fontWeight: "bold",
                         fontFamily: "Georgia, serif", flexShrink: 0,
-                      }}>SN</div>
+                      }}>Cl</div>
                       <div>
                         <p style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
-                          Study Notebook
+                          Clockocus
                         </p>
                         <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
-                          studynotebook.freebuff.app
+                          clockocus.freebuff.app
                         </p>
                       </div>
                     </div>
@@ -350,10 +350,10 @@ export default function SessionShare() {
                     </div>
                     <div className="text-right">
                       <p style={{ fontSize: 7, letterSpacing: "0.15em", textTransform: "uppercase", color: subjectColor + "60" }}>
-                        Study Notebook
+                        Clockocus
                       </p>
                       <p style={{ fontSize: 6, letterSpacing: "0.1em", color: subjectColor + "40" }}>
-                        studynotebook.freebuff.app
+                        clockocus.freebuff.app
                       </p>
                     </div>
                   </div>
@@ -388,13 +388,13 @@ export default function SessionShare() {
                           display: "flex", alignItems: "center", justifyContent: "center",
                           color: "#FAF6F0", fontSize: 10, fontWeight: "bold",
                           fontFamily: "Georgia, serif", flexShrink: 0,
-                        }}>SN</div>
+                        }}>Cl</div>
                         <span style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 500 }}>
-                          Study Notebook
+                          Clockocus
                         </span>
                       </div>
                       <span style={{ fontSize: 6, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
-                        studynotebook.freebuff.app
+                        clockocus.freebuff.app
                       </span>
                     </div>
                   </div>
@@ -528,7 +528,7 @@ export default function SessionShare() {
                   <a href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(
                     "Just studied " + session.subjectName + " for " + formatTime(session.duration) + "!" +
                     (session.notes ? " \"" + session.notes + "\"" : "") +
-                    " studynotebook.freebuff.app"
+                    " clockocus.freebuff.app"
                   )} target="_blank" rel="noopener noreferrer" className="block">
                     <Button variant="outline" className="w-full gap-2">
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
