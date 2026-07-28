@@ -259,14 +259,13 @@ export default function Dashboard() {
 
   const handleStartTimer = () => {
     if (!timerSubject) return;
-    if (timerMode === "pomodoro") {
-      // Always start pomodoro from zero (new session or resume from pause reset)
-      setTimerSeconds(0);
+    if (timerMode === "pomodoro" && timerSeconds === 0) {
+      // Fresh pomodoro start (new phase or after reset) — start from zero
       timerStartTimeRef.current = null;
     }
-    // For free mode: timerStartTimeRef already has the start time from initial run
-    // On first start, it's null → effect will set it to Date.now()
-    // On resume from pause, it has the old value → effect will recalculate from timerSeconds
+    // On resume from pause (timerSeconds > 0), keep the elapsed time
+    // timerStartTimeRef still has the old reference → effect recalculates from timerSeconds
+    // On fresh start (timerSeconds === 0), timerStartTimeRef is null → effect sets to Date.now()
     setTimerRunning(true);
   };
 
