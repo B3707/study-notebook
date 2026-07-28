@@ -102,7 +102,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="font-serif">Study Notebook</span>
+            <span className="font-serif">Clockocus</span>
           </button>
           <button
             onClick={toggleTheme}
@@ -126,7 +126,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
               <BookOpen className="h-7 w-7 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-serif font-bold text-foreground">
-              Study Notebook
+              Clockocus
             </h1>
             <p className="text-sm text-muted-foreground mt-1 handwriting">
               {flow === "signIn"
