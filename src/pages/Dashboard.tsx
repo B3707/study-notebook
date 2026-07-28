@@ -39,6 +39,7 @@ import {
   ListChecks,
   GripVertical,
   ArrowLeft,
+  CalendarDays,
   Moon,
   Sun,
   User,
@@ -112,6 +113,7 @@ export default function Dashboard() {
   const [newTaskDesc, setNewTaskDesc] = useState("");
   const [newTaskSubject, setNewTaskSubject] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState<Priority>("medium");
+  const [newTaskDueDate, setNewTaskDueDate] = useState("");
 
   // Timer state
   const [timerMode, setTimerMode] = useState<"free" | "pomodoro">("free");
@@ -148,7 +150,13 @@ export default function Dashboard() {
   }, [user]);
 
   const today = new Date().toISOString().split("T")[0];
-  const activeTasks = tasks?.filter((t) => !t.completed) ?? [];
+  const activeTasks = (tasks?.filter((t) => !t.completed) ?? []).sort((a, b) => {
+    // Sort by due date ascending — tasks without due dates go to the end
+    if (!a.dueDate && !b.dueDate) return 0;
+    if (!a.dueDate) return 1;
+    if (!b.dueDate) return -1;
+    return a.dueDate.localeCompare(b.dueDate);
+  });
   const completedTasks = tasks?.filter((t) => t.completed) ?? [];
 
   useEffect(() => {
@@ -308,11 +316,13 @@ export default function Dashboard() {
       description: newTaskDesc.trim() || undefined,
       subjectId: newTaskSubject as any,
       priority: newTaskPriority,
+      dueDate: newTaskDueDate || undefined,
     });
     setNewTaskTitle("");
     setNewTaskDesc("");
     setNewTaskSubject("");
     setNewTaskPriority("medium");
+    setNewTaskDueDate("");
     setShowNewTask(false);
   };
 
@@ -823,6 +833,17 @@ export default function Dashboard() {
                               rows={2}
                             />
                           </div>
+                          <div>
+                            <label className="block text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wider">
+                              Due Date (optional)
+                            </label>
+                            <Input
+                              type="date"
+                              value={newTaskDueDate}
+                              onChange={(e) => setNewTaskDueDate(e.target.value)}
+                              className="bg-background"
+                            />
+                          </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label className="block text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wider">
@@ -914,6 +935,9 @@ export default function Dashboard() {
                               >
                                 {task.priority}
                               </Badge>
+                              {task.dueDate && (
+                                <DueDateBadge dueDate={task.dueDate} />
+                              )}
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                               <div
@@ -1413,6 +1437,47 @@ export default function Dashboard() {
       <AchievementsModal open={showAchievements} onOpenChange={setShowAchievements} />
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
     </div>
+  );
+}
+
+// ===== DueDateBadge Component =====
+function DueDateBadge({ dueDate }: { dueDate: string }) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(dueDate);
+  due.setHours(0, 0, 0, 0);
+  const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  let badgeClass = "bg-chart-4/20 text-chart-4 border-chart-4/30"; // default
+  let label = "";
+
+  if (diffDays < 0) {
+    badgeClass = "bg-destructive/20 text-destructive border-destructive/30";
+    label = `${Math.abs(diffDays)}d overdue`;
+  } else if (diffDays === 0) {
+    badgeClass = "bg-destructive/20 text-destructive border-destructive/30";
+    label = "Due today";
+  } else if (diffDays === 1) {
+    badgeClass = "bg-chart-1/20 text-chart-1 border-chart-1/30";
+    label = "Tomorrow";
+  } else if (diffDays <= 3) {
+    badgeClass = "bg-chart-1/20 text-chart-1 border-chart-1/30";
+    label = `${diffDays}d left`;
+  } else if (diffDays <= 7) {
+    badgeClass = "bg-chart-2/20 text-chart-2 border-chart-2/30";
+    label = `${diffDays}d left`;
+  } else {
+    label = due.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  return (
+    <Badge
+      variant="outline"
+      className={`text-[10px] px-1.5 py-0 border gap-1 ${badgeClass}`}
+    >
+      <CalendarDays className="h-2.5 w-2.5" />
+      {label}
+    </Badge>
   );
 }
 
