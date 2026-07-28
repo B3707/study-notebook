@@ -1511,10 +1511,13 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: "#FAF6F0", fontSize: 12, fontWeight: "bold",
                   fontFamily: "Georgia, serif", flexShrink: 0,
-                }}>SN</div>
+                }}>Cl</div>
                 <div>
                   <p style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
-                    Study Notebook
+                    Clockocus
+                  </p>
+                  <p style={{ fontSize: 6, color: "rgba(183, 28, 28, 0.35)", margin: "1px 0 0", letterSpacing: "0.08em" }}>
+                    clockocus.freebuff.app
                   </p>
                 </div>
               </div>
@@ -1600,10 +1603,10 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
           {/* Footer */}
           <div className="px-8 py-3 flex-shrink-0 flex items-center justify-between" style={{ borderTop: "1px solid rgba(183, 28, 28, 0.1)" }}>
             <span style={{ fontSize: 7, fontFamily: "Georgia, serif", fontStyle: "italic", color: "#8B7355" }}>
-              &copy; Study Notebook
+              &copy; Clockocus
             </span>
             <span style={{ fontSize: 7, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
-              studynotebook.app
+              clockocus.freebuff.app
             </span>
           </div>
         </div>
