@@ -8,7 +8,6 @@ import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
-import { ThemeModal } from "@/components/ThemeModal";
 import { ShareStats } from "@/components/ShareStats";
 import {
   DropdownMenu,
@@ -51,7 +50,6 @@ import {
   Camera,
   Loader2,
   Download,
-  Palette,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
@@ -104,7 +102,6 @@ export default function Dashboard() {
   const [showProfile, setShowProfile] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-  const [showTheme, setShowTheme] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -350,13 +347,6 @@ export default function Dashboard() {
                 >
                   <Trophy className="mr-2 h-4 w-4 text-accent" />
                   Achievements
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setShowTheme(true)}
-                  className="cursor-pointer"
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Theme
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setShowAbout(true)}
@@ -1378,7 +1368,6 @@ export default function Dashboard() {
       </div>
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <AchievementsModal open={showAchievements} onOpenChange={setShowAchievements} />
-      <ThemeModal open={showTheme} onOpenChange={setShowTheme} />
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
     </div>
   );
@@ -1519,8 +1508,10 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
                 <div style={{
                   width: 32, height: 32, borderRadius: 8,
                   background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                  flexShrink: 0,
-                }}><img src="/logo.png" alt="Clockocus" style={{ width: 32, height: 32, borderRadius: 8, objectFit: "cover" }} /></div>
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#FAF6F0", fontSize: 12, fontWeight: "bold",
+                  fontFamily: "Georgia, serif", flexShrink: 0,
+                }}>Cl</div>
                 <div>
                   <p style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                     Clockocus
