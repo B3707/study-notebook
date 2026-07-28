@@ -8,6 +8,7 @@ import { LogoDropdown } from "@/components/LogoDropdown";
 import { ProfileModal } from "@/components/ProfileModal";
 import { AboutModal } from "@/components/AboutModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
+import { ThemeModal } from "@/components/ThemeModal";
 import { ShareStats } from "@/components/ShareStats";
 import {
   DropdownMenu,
@@ -50,6 +51,7 @@ import {
   Camera,
   Loader2,
   Download,
+  Palette,
 } from "lucide-react";
 
 type Priority = "low" | "medium" | "high";
@@ -102,6 +104,7 @@ export default function Dashboard() {
   const [showProfile, setShowProfile] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showTheme, setShowTheme] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -347,6 +350,13 @@ export default function Dashboard() {
                 >
                   <Trophy className="mr-2 h-4 w-4 text-accent" />
                   Achievements
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShowTheme(true)}
+                  className="cursor-pointer"
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setShowAbout(true)}
@@ -1368,6 +1378,7 @@ export default function Dashboard() {
       </div>
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <AchievementsModal open={showAchievements} onOpenChange={setShowAchievements} />
+      <ThemeModal open={showTheme} onOpenChange={setShowTheme} />
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
     </div>
   );
