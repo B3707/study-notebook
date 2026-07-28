@@ -53,7 +53,7 @@ export function ShareStats() {
     "Total Time: " + formatTime(totalMinutes) + "\n" +
     "Sessions: " + sessionCount + "\n" +
     "Subjects: " + subjectCount + "\n\n" +
-    "clockocus.app";
+    "clockocus.freebuff.app";
 
   const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
@@ -229,7 +229,7 @@ export function ShareStats() {
                       Clockocus
                     </p>
                     <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
-                      clockocus.app
+                      clockocus.freebuff.app
                     </p>
                   </div>
                 </div>
@@ -383,7 +383,7 @@ export function ShareStats() {
                         Clockocus
                       </p>
                       <p style={{ fontSize: 6, color: "rgba(183, 28, 28, 0.35)", margin: "1px 0 0", letterSpacing: "0.08em" }}>
-                        clockocus.app
+                        clockocus.freebuff.app
                       </p>
                     </div>
                   </div>
