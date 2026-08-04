@@ -1613,13 +1613,10 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
           <div className={`${headerPadding} flex-shrink-0`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div style={{
+                <img src="/logo.png" alt="Clockocus" style={{
                   width: 32, height: 32, borderRadius: 8,
-                  background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#FAF6F0", fontSize: 12, fontWeight: "bold",
-                  fontFamily: "Georgia, serif", flexShrink: 0,
-                }}>Cl</div>
+                  objectFit: "cover", flexShrink: 0,
+                }} />
                 <div>
                   <p style={{ fontSize: 8, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                     Clockocus

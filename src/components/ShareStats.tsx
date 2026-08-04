@@ -217,13 +217,10 @@ export function ShareStats() {
               {/* Brand */}
               <div className="px-10 pt-10 pb-2 flex-shrink-0">
                 <div className="flex items-center gap-3">
-                  <div style={{
+                  <img src="/logo.png" alt="Clockocus" style={{
                     width: 34, height: 34, borderRadius: 9,
-                    background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "#FAF6F0", fontSize: 13, fontWeight: "bold",
-                    fontFamily: "Georgia, serif", flexShrink: 0,
-                  }}>Cl</div>
+                    objectFit: "cover", flexShrink: 0,
+                  }} />
                   <div>
                     <p style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                       Clockocus
@@ -371,13 +368,10 @@ export function ShareStats() {
               <div className="px-8 pt-8 pb-3 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div style={{
+                    <img src="/logo.png" alt="Clockocus" style={{
                       width: 30, height: 30, borderRadius: 8,
-                      background: "linear-gradient(135deg, #B71C1C, #D32F2F)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "#FAF6F0", fontSize: 11, fontWeight: "bold",
-                      fontFamily: "Georgia, serif", flexShrink: 0,
-                    }}>Cl</div>
+                      objectFit: "cover", flexShrink: 0,
+                    }} />
                     <div>
                       <p style={{ fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8B7355", fontWeight: 600, margin: 0 }}>
                         Clockocus
