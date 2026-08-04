@@ -1,4 +1,10 @@
-import { useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -11,7 +17,15 @@ function getInitialTheme(): Theme {
     : "light";
 }
 
-export function useTheme() {
+type ThemeContextValue = {
+  theme: Theme;
+  toggleTheme: () => void;
+  setTheme: (t: Theme) => void;
+};
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
@@ -37,5 +51,17 @@ export function useTheme() {
     setThemeState(t);
   };
 
-  return { theme, toggleTheme, setTheme };
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return ctx;
 }

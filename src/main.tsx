@@ -2,6 +2,7 @@ import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
+import { ThemeProvider } from "@/hooks/use-theme";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect, lazy, Suspense } from "react";
@@ -54,22 +55,24 @@ function RouteSyncer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <VlyToolbar />
-    <InstrumentationProvider>
-      <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/share/session/:sessionId" element={<SessionShare />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexAuthProvider>
-    </InstrumentationProvider>
+    <ThemeProvider>
+      <InstrumentationProvider>
+        <ConvexAuthProvider client={convex}>
+          <BrowserRouter>
+            <RouteSyncer />
+            <Suspense fallback={<RouteLoading />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/share/session/:sessionId" element={<SessionShare />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <Toaster />
+        </ConvexAuthProvider>
+      </InstrumentationProvider>
+    </ThemeProvider>
   </StrictMode>,
 );
