@@ -22,6 +22,11 @@ export function useTheme() {
       root.classList.remove("dark");
     }
     localStorage.setItem("clockocus-theme", theme);
+
+    const favicon = document.querySelector<HTMLLinkElement>("link[rel='icon']");
+    if (favicon) {
+      favicon.href = theme === "dark" ? "/logo-dark.png" : "/logo.png";
+    }
   }, [theme]);
 
   const toggleTheme = () => {
