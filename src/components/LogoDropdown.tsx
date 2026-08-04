@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useAuth } from "@/hooks/use-auth";
+import { Logo } from "@/components/Logo";
 import { Home, LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 
@@ -34,9 +35,7 @@ export function LogoDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-10 w-10">
-          <img
-            src="/logo.png"
-            alt="Logo"
+          <Logo
             width={32}
             height={32}
             className="rounded-lg object-cover"

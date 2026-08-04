@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
+import { Logo } from "@/components/Logo";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { BookOpen, Camera, Loader2, Save, Trash2, Upload } from "lucide-react";
@@ -112,7 +113,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
-            <img src="/logo.png" alt="Clockocus" className="h-5 w-5 rounded" />
+            <Logo className="h-5 w-5 rounded" />
             Your Profile
           </DialogTitle>
           <DialogDescription>
@@ -134,7 +135,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <img src="/logo.png" alt="Clockocus" className="w-full h-full object-cover" />
+                  <Logo className="w-full h-full object-cover" />
                 )}
               </div>
               {/* Overlay on hover */}
@@ -243,7 +244,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <img src="/logo.png" alt="Clockocus" className="w-full h-full object-cover" />
+                  <Logo className="w-full h-full object-cover" />
                 )}
               </div>
               <div className="min-w-0">
