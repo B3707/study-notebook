@@ -226,7 +226,7 @@ export function ShareStats() {
                       Clockocus
                     </p>
                     <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
-                      clockocus.freebuff.app
+                      clockocus.vercel.app
                     </p>
                   </div>
                 </div>
@@ -377,7 +377,7 @@ export function ShareStats() {
                         Clockocus
                       </p>
                       <p style={{ fontSize: 6, color: "rgba(183, 28, 28, 0.35)", margin: "1px 0 0", letterSpacing: "0.08em" }}>
-                        clockocus.freebuff.app
+                        clockocus.vercel.app
                       </p>
                     </div>
                   </div>

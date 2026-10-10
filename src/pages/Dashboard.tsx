@@ -1622,7 +1622,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
                     Clockocus
                   </p>
                   <p style={{ fontSize: 6, color: "rgba(183, 28, 28, 0.35)", margin: "1px 0 0", letterSpacing: "0.08em" }}>
-                    clockocus.freebuff.app
+                    clockocus.vercel.app
                   </p>
                 </div>
               </div>
@@ -1711,7 +1711,7 @@ function TodayStatsCard({ todaySessions, subjects, user }: TodayStatsCardProps) 
               &copy; Clockocus
             </span>
             <span style={{ fontSize: 7, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
-              clockocus.freebuff.app
+              clockocus.vercel.app
             </span>
           </div>
         </div>

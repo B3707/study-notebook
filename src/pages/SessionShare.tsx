@@ -249,7 +249,7 @@ export default function SessionShare() {
                           Clockocus
                         </p>
                         <p style={{ fontSize: 7, color: "rgba(183, 28, 28, 0.4)", margin: "2px 0 0", letterSpacing: "0.1em" }}>
-                          clockocus.freebuff.app
+                          clockocus.vercel.app
                         </p>
                       </div>
                     </div>
@@ -350,7 +350,7 @@ export default function SessionShare() {
                         Clockocus
                       </p>
                       <p style={{ fontSize: 6, letterSpacing: "0.1em", color: subjectColor + "40" }}>
-                        clockocus.freebuff.app
+                        clockocus.vercel.app
                       </p>
                     </div>
                   </div>
@@ -388,7 +388,7 @@ export default function SessionShare() {
                         </span>
                       </div>
                       <span style={{ fontSize: 6, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(183, 28, 28, 0.3)" }}>
-                        clockocus.freebuff.app
+                        clockocus.vercel.app
                       </span>
                     </div>
                   </div>
