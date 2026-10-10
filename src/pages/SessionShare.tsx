@@ -123,7 +123,7 @@ export default function SessionShare() {
           var shareText = "Just completed a study session!\n" +
             session.subjectName + " - " + formatTime(session.duration) +
             (session.notes ? "\n\"" + session.notes + "\"" : "") +
-            "\n\nclockocus.freebuff.app";
+            "\n\nclockocus.vercel.app";
           if (navigator.share) {
             await navigator.share({ title: "My Study Session", text: shareText });
           } else {
@@ -136,7 +136,7 @@ export default function SessionShare() {
         var shareText = "Just completed a study session!\n" +
           session.subjectName + " - " + formatTime(session.duration) +
           (session.notes ? "\n\"" + session.notes + "\"" : "") +
-          "\n\nclockocus.freebuff.app";
+          "\n\nclockocus.vercel.app";
         await navigator.clipboard.writeText(shareText);
         setCopied(true);
         setTimeout(function() { setCopied(false); }, 2000);
@@ -522,7 +522,7 @@ export default function SessionShare() {
                   <a href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(
                     "Just studied " + session.subjectName + " for " + formatTime(session.duration) + "!" +
                     (session.notes ? " \"" + session.notes + "\"" : "") +
-                    " clockocus.freebuff.app"
+                    " clockocus.vercel.app"
                   )} target="_blank" rel="noopener noreferrer" className="block">
                     <Button variant="outline" className="w-full gap-2">
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">

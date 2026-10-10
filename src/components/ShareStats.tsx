@@ -53,7 +53,7 @@ export function ShareStats() {
     "Total Time: " + formatTime(totalMinutes) + "\n" +
     "Sessions: " + sessionCount + "\n" +
     "Subjects: " + subjectCount + "\n\n" +
-    "clockocus.freebuff.app";
+    "clockocus.vercel.app";
 
   const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
